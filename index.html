@@ -473,8 +473,13 @@ a { text-decoration: none; color: inherit; }
 <div class="toast" id="toast"></div>
 
 <script>
-const WEBHOOK = 'YOUR_N8N_WEBHOOK_URL';
+const N8N_BASE = 'https://meshminds.app.n8n.cloud/webhook';
+const FETCH_IDEAS_URL = N8N_BASE + '/fetch-ideas';
+const FETCH_DRAFT_URL = N8N_BASE + '/fetch-draft';
+
 const ratings = {};
+let currentIdea = null;
+let currentDraft = null;
 
 const pages = {
   'overview':     { title: 'Overview',           crumb: 'Workspace' },
@@ -493,6 +498,66 @@ function nav(id, btn) {
     document.getElementById('page-title').textContent = p.title;
     document.getElementById('page-crumb').textContent = p.crumb;
   }
+  if (id === 'li-ideas') loadIdea();
+}
+
+async function loadIdea() {
+  const list = document.getElementById('ideas-list');
+  list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;">Loading idea from N8N...</div>';
+
+  try {
+    const res = await fetch(FETCH_IDEAS_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const idea = await res.json();
+
+    if (!idea || !idea.title) {
+      list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;">No pending idea. Next run at 08:00.</div>';
+      return;
+    }
+
+    currentIdea = idea;
+
+    document.querySelector('.run-tag').innerHTML = 'Pending idea <strong>·</strong> ' + new Date().toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'});
+
+    list.innerHTML = `
+      <div class="idea-row">
+        <div class="idea-numcol">1</div>
+        <div class="idea-content">
+          <div class="idea-title">${escHtml(idea.title)}</div>
+          <div class="idea-tags">
+            ${idea.angle ? '<span class="tag">' + escHtml(idea.angle) + '</span>' : ''}
+            ${idea.why ? '<span class="tag">' + escHtml(idea.why.substring(0,40)) + '</span>' : ''}
+          </div>
+          <div class="idea-hook">"${escHtml(idea.hook)}"</div>
+          ${idea.source ? '<div class="idea-source">Source — ' + escHtml(idea.source) + '</div>' : ''}
+        </div>
+        <div class="idea-actions">
+          <div>
+            <div class="stars-label">Rate this idea</div>
+            <div class="stars" data-card="0">
+              <span class="star" onclick="rateStar(0,1)">★</span>
+              <span class="star" onclick="rateStar(0,2)">★</span>
+              <span class="star" onclick="rateStar(0,3)">★</span>
+              <span class="star" onclick="rateStar(0,4)">★</span>
+              <span class="star" onclick="rateStar(0,5)">★</span>
+            </div>
+            <div class="rval" id="rval-0">Not rated</div>
+          </div>
+          <div class="action-btns">
+            <button class="btn-sm ghost" onclick="discardIdea(this)">Discard</button>
+            <button class="btn-sm" id="abtn-0" onclick="approveIdea(0, this)">Approve →</button>
+          </div>
+        </div>
+      </div>`;
+
+  } catch(e) {
+    list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.12em;">Could not load idea — check N8N webhook · ' + e.message + '</div>';
+  }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function rateStar(card, val) {
@@ -501,19 +566,39 @@ function rateStar(card, val) {
   document.getElementById('rval-' + card).textContent = val + ' / 5';
 }
 
-function approveIdea(idx, btn) {
-  btn.textContent = 'Approved ✓';
-  btn.classList.add('approved');
+async function approveIdea(idx, btn) {
+  if (!currentIdea || !currentIdea.resume_url) {
+    toast('No resume URL — run the workflow first');
+    return;
+  }
+
+  btn.textContent = 'Sending...';
   btn.disabled = true;
-  callWebhook({ event: 'idea_approved', idea_index: idx, rating: ratings[idx] || 0 });
-  toast('Idea approved — generating draft');
+
+  try {
+    await fetch(currentIdea.resume_url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        approved: true,
+        rating: ratings[idx] || 0,
+        ts: new Date().toISOString()
+      })
+    });
+    btn.textContent = 'Approved ✓';
+    btn.classList.add('approved');
+    toast('Approved — content generator is now running');
+  } catch(e) {
+    btn.textContent = 'Approve →';
+    btn.disabled = false;
+    toast('Error: ' + e.message);
+  }
 }
 
-function discard(btn) {
-  const row = btn.closest('.idea-row');
-  row.style.opacity = '0.3';
-  row.style.pointerEvents = 'none';
-  toast('Idea discarded');
+function discardIdea(btn) {
+  btn.closest('.idea-row').style.opacity = '0.3';
+  btn.closest('.idea-row').style.pointerEvents = 'none';
+  toast('Idea discarded — next run tomorrow at 08:00');
 }
 
 function filterH(type, btn) {
@@ -530,13 +615,7 @@ function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-async function callWebhook(data) {
-  try {
-    await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...data, ts: new Date().toISOString()}) });
-  } catch(e) { console.warn('webhook:', e.message); }
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function buildBars(id, data) {
