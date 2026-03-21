@@ -103,8 +103,8 @@ button { font-family: var(--body); cursor: pointer; }
 
 /* FLOWS TABLE */
 .flows { margin: 0 28px; border: 1px solid var(--line2); margin-bottom: 28px; background: var(--surf); }
-.flows-head { display: grid; grid-template-columns: 1fr 80px 70px 70px 70px 32px; padding: 7px 16px; background: var(--ink); gap: 8px; font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.15em; }
-.flow-row { display: grid; grid-template-columns: 1fr 80px 70px 70px 70px 32px; padding: 12px 16px; border-top: 1px solid var(--line); gap: 8px; align-items: center; cursor: pointer; transition: background 0.12s; }
+.flows-head { display: grid; grid-template-columns: 1fr 80px 70px 70px 32px; padding: 7px 16px; background: var(--ink); gap: 8px; font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.15em; }
+.flow-row { display: grid; grid-template-columns: 1fr 80px 70px 70px 32px; padding: 12px 16px; border-top: 1px solid var(--line); gap: 8px; align-items: center; cursor: pointer; transition: background 0.12s; }
 .flow-row:hover { background: var(--bg2); }
 .flow-name { font-weight: 600; font-size: 13px; color: var(--ink); }
 .flow-desc { font-family: var(--mono); font-size: 9px; color: var(--ink3); margin-top: 2px; }
@@ -206,20 +206,6 @@ button { font-family: var(--body); cursor: pointer; }
 .overlay-foot-left { display: flex; gap: 8px; }
 .overlay-foot-right { display: flex; gap: 8px; }
 
-/* RATING OVERLAY (post-publish) */
-.rating-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.75); z-index: 200; display: flex; align-items: center; justify-content: center; }
-.rating-overlay.hidden { display: none; }
-.rating-box { background: var(--surf); width: 420px; border: 1px solid var(--line2); }
-.rating-box-head { padding: 14px 20px; background: var(--green); }
-.rating-box-head h3 { font-family: var(--disp); font-size: 20px; letter-spacing: 0.06em; color: #fff; }
-.rating-box-body { padding: 20px; }
-.rating-box-body p { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
-.big-stars { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
-.big-star { font-size: 28px; cursor: pointer; color: var(--line); transition: color 0.1s; }
-.big-star.lit { color: #D97706; }
-.rating-notes { width: 100%; font-family: var(--body); font-size: 13px; border: 1px solid var(--line); padding: 8px 10px; outline: none; resize: none; height: 60px; margin-bottom: 14px; transition: border-color 0.15s; }
-.rating-notes:focus { border-color: var(--ink); }
-.rating-box-foot { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
 
 /* GENERATING OVERLAY */
 .gen-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; }
@@ -274,8 +260,8 @@ button { font-family: var(--body); cursor: pointer; }
 .filter-pill:hover { background: var(--bg2); color: var(--ink); }
 .filter-pill.active { background: var(--ink); color: #fff; }
 .hist-table { background: var(--surf); }
-.hist-thead { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 50px 80px; padding: 6px 28px; background: var(--ink); font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.14em; gap: 10px; }
-.hist-row { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 50px 80px; padding: 10px 28px; border-bottom: 1px solid var(--line); gap: 10px; align-items: center; cursor: pointer; transition: background 0.1s; }
+.hist-thead { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 80px; padding: 6px 28px; background: var(--ink); font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.14em; gap: 10px; }
+.hist-row { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 80px; padding: 10px 28px; border-bottom: 1px solid var(--line); gap: 10px; align-items: center; cursor: pointer; transition: background 0.1s; }
 .hist-row:nth-child(even) { background: var(--bg); }
 .hist-row:hover { background: var(--bg2) !important; }
 .ht { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -319,18 +305,19 @@ button { font-family: var(--body); cursor: pointer; }
 .idea-item-date { font-family: var(--mono); font-size: 8px; color: var(--ink3); }
 .ideas-empty { text-align: center; padding: 48px 20px; font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; }
 
-/* SETTINGS */
-.settings-layout { padding: 28px; max-width: 600px; }
-.settings-layout h2 { font-family: var(--disp); font-size: 28px; letter-spacing: 0.04em; margin-bottom: 4px; }
-.settings-layout .sub { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 28px; }
-.settings-section { margin-bottom: 28px; }
-.settings-section h3 { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink3); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-.setting-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-.setting-row label { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink2); min-width: 130px; flex-shrink: 0; }
-.setting-row input { flex: 1; font-family: var(--mono); font-size: 11px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 7px 10px; outline: none; transition: border-color 0.15s; }
-.setting-row input:focus { border-color: var(--ink); background: #fff; }
-.save-settings { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 9px 20px; border: 1px solid var(--ink); background: var(--ink); color: #fff; cursor: pointer; transition: background 0.15s; }
-.save-settings:hover { background: #333; }
+
+/* POSTING TIMER */
+.timer-bar { background: var(--ink); padding: 10px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.timer-left { display: flex; align-items: center; gap: 12px; }
+.timer-label { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.4); }
+.timer-countdown { font-family: var(--mono); font-size: 13px; color: #fff; letter-spacing: 0.08em; }
+.timer-countdown.urgent { color: #F97316; }
+.timer-countdown.overdue { color: var(--red); }
+.timer-track { width: 120px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.timer-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 1s linear; }
+.timer-fill.urgent { background: #F97316; }
+.timer-fill.overdue { background: var(--red); }
+.timer-right { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; }
 
 /* TOAST */
 .toast { position: fixed; bottom: 20px; right: 20px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 10px 16px; z-index: 300; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; }
@@ -362,10 +349,6 @@ button { font-family: var(--body); cursor: pointer; }
         <button class="nav-btn" onclick="nav('li-history',this)">History</button>
       </div>
       <div class="nav-group">
-        <div class="nav-group-label">System</div>
-        <button class="nav-btn" onclick="nav('settings',this)">Settings</button>
-      </div>
-      <div class="nav-group">
         <div class="nav-group-label">Platforms</div>
         <button class="nav-btn dim">Email</button>
         <button class="nav-btn dim">X / Twitter</button>
@@ -392,6 +375,16 @@ button { font-family: var(--body); cursor: pointer; }
       </div>
     </div>
 
+    <!-- POSTING TIMER -->
+    <div class="timer-bar">
+      <div class="timer-left">
+        <span class="timer-label">Next post</span>
+        <span class="timer-countdown" id="timer-countdown">—</span>
+        <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:0%"></div></div>
+      </div>
+      <div class="timer-right" id="timer-right">Post daily to keep the streak alive</div>
+    </div>
+
     <div class="content">
 
       <!-- OVERVIEW -->
@@ -409,13 +402,18 @@ button { font-family: var(--body); cursor: pointer; }
           <div class="kpi-row" style="margin:0;">
             <div class="kpi"><div class="kpi-val">3</div><div class="kpi-lbl">Active flows</div><div class="kpi-note">All live</div></div>
             <div class="kpi"><div class="kpi-val" id="ov-posts">0</div><div class="kpi-lbl">Posts published</div><div class="kpi-note" id="ov-posts-note">—</div></div>
-            <div class="kpi"><div class="kpi-val green" id="ov-rating">—</div><div class="kpi-lbl">Avg post rating</div><div class="kpi-note neutral">From your ratings</div></div>
             <div class="kpi"><div class="kpi-val red" id="ov-pending">0</div><div class="kpi-lbl">Pending approval</div><div class="kpi-note warn" id="ov-pending-note" style="cursor:pointer" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])"></div></div>
           </div>
         </div>
 
         <!-- 30-DAY STREAK -->
-        <div class="section-head" style="margin-top:20px;"><h3>30-day streak · Cursor & AI journal</h3></div>
+        <div class="section-head" style="margin-top:20px;">
+          <h3>30-day streak · Cursor & AI journal</h3>
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+            <span style="font-family:var(--mono);font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;">Start date</span>
+            <input type="date" id="s-streak-start" style="font-family:var(--mono);font-size:9px;border:1px solid var(--line);padding:3px 7px;background:var(--bg);color:var(--ink);outline:none;" onchange="saveStreakDate(this.value)">
+          </div>
+        </div>
         <div class="streak-section">
           <div class="streak-head">
             <span>Day progress</span>
@@ -429,7 +427,6 @@ button { font-family: var(--body); cursor: pointer; }
           <div class="growth-panel">
             <div class="gp-head"><span class="gp-title">Followers</span><span class="gp-val">—</span></div>
             <div class="sparkline" id="followers-spark"></div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:6px;">Add via Settings → LinkedIn handle</div>
           </div>
           <div class="growth-panel">
             <div class="gp-head"><span class="gp-title">Impressions (30d)</span><span class="gp-val" id="ov-impressions">—</span></div>
@@ -440,12 +437,11 @@ button { font-family: var(--body); cursor: pointer; }
 
         <div class="section-head"><h3>Workflows</h3></div>
         <div class="flows" style="margin-top:0;">
-          <div class="flows-head"><div>Workflow</div><div>Status</div><div>Posts</div><div>Avg score</div><div>Eng. rate</div><div></div></div>
+          <div class="flows-head"><div>Workflow</div><div>Status</div><div>Posts</div><div>Eng. rate</div><div></div></div>
           <div class="flow-row" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])">
             <div><div class="flow-name">LinkedIn Autoposter</div><div class="flow-desc">Daily idea generation · human approval · post & track</div></div>
             <div><span class="badge badge-live">Live</span></div>
             <div class="cell" id="flow-posts">—</div>
-            <div class="cell" id="flow-score">—</div>
             <div class="cell muted">—</div>
             <div class="arrow">→</div>
           </div>
@@ -550,7 +546,6 @@ button { font-family: var(--body); cursor: pointer; }
         <div class="metrics-strip" id="analytics-strip">
           <div class="metric"><div class="metric-v" id="an-posts">—</div><div class="metric-l">Posts published</div><div class="metric-d" id="an-posts-d">—</div></div>
           <div class="metric"><div class="metric-v" id="an-impr">—</div><div class="metric-l">Total impressions</div><div class="metric-d">From post history</div></div>
-          <div class="metric"><div class="metric-v" id="an-rating">—</div><div class="metric-l">Avg daniel rating</div><div class="metric-d">Your subjective score</div></div>
           <div class="metric"><div class="metric-v" id="an-streak">0</div><div class="metric-l">Current streak</div><div class="metric-d">30-day challenge</div></div>
         </div>
         <div class="chart-area">
@@ -558,14 +553,7 @@ button { font-family: var(--body); cursor: pointer; }
           <div class="big-bars" id="imp-chart"></div>
         </div>
         <div class="two-col">
-          <div class="chart-area" style="border-bottom:1px solid var(--line);">
-            <div class="chart-area-head"><span class="ca-title">Rating vs impressions correlation</span></div>
-            <div style="margin-top:8px;" id="corr-section">
-              <div class="corr-item"><div class="ci-lbl">Score 8–10</div><div class="ci-track"><div class="ci-fill" id="corr-hi" style="width:0%"></div></div><div class="ci-num" id="corr-hi-n">—</div></div>
-              <div class="corr-item"><div class="ci-lbl">Score 5–7</div><div class="ci-track"><div class="ci-fill mid" id="corr-mid" style="width:0%"></div></div><div class="ci-num" id="corr-mid-n">—</div></div>
-              <div class="corr-item"><div class="ci-lbl">Score 0–4</div><div class="ci-track"><div class="ci-fill low" id="corr-lo" style="width:0%"></div></div><div class="ci-num" id="corr-lo-n">—</div></div>
-            </div>
-          </div>
+
           <div class="chart-area" style="border-bottom:1px solid var(--line);">
             <div class="chart-area-head"><span class="ca-title">Posts by category</span></div>
             <div style="margin-top:8px;" id="cat-section"></div>
@@ -585,7 +573,7 @@ button { font-family: var(--body); cursor: pointer; }
           <button class="filter-pill" onclick="filterH('low',this)">Below 5</button>
         </div>
         <div class="hist-table">
-          <div class="hist-thead"><div>Post</div><div>Date</div><div>Impressions</div><div>Likes</div><div>Score</div><div>Day</div></div>
+          <div class="hist-thead"><div>Post</div><div>Date</div><div>Impressions</div><div>Likes</div><div>Day</div></div>
           <div id="hist-body"></div>
         </div>
       </div>
@@ -628,32 +616,6 @@ button { font-family: var(--body); cursor: pointer; }
         </div>
       </div>
 
-      <!-- SETTINGS -->
-      <div class="screen" id="screen-settings">
-        <div class="settings-layout">
-          <h2>Settings</h2>
-          <p class="sub">Configure your n8n webhook URLs and sheet connections</p>
-          <div class="settings-section">
-            <h3>N8N Webhooks</h3>
-            <div class="setting-row"><label>Trigger URL</label><input type="text" id="s-trigger" placeholder="https://meshminds.app.n8n.cloud/webhook/…" /></div>
-            <div class="setting-row"><label>Approve URL</label><input type="text" id="s-approve" placeholder="Resume URL + ?action=approve" /></div>
-            <div class="setting-row"><label>Reject URL</label><input type="text" id="s-reject" placeholder="Resume URL + ?action=reject" /></div>
-            <div class="setting-row"><label>Ideas sheet URL</label><input type="text" id="s-ideas-sheet" placeholder="Google Apps Script web app URL" /></div>
-          </div>
-          <div class="settings-section">
-            <h3>30-Day Challenge</h3>
-            <div class="setting-row"><label>Start date</label><input type="date" id="s-streak-start" /></div>
-          </div>
-          <div class="settings-section">
-            <h3>Post history (manual import)</h3>
-            <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);line-height:1.8;margin-bottom:12px;">
-              Paste post history JSON below to populate analytics and history views.<br>
-              Format: array of objects with keys: title, date, post_text, category, daniel_rating, impressions, comments, day_number
-            </div>
-            <textarea id="s-history-json" style="width:100%;font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:10px;height:120px;outline:none;resize:vertical;" placeholder='[{"title":"My first Cursor post","date":"21.03.26","post_text":"...","category":"ai_tools","daniel_rating":8,"impressions":420,"comments":12,"day_number":1}]'></textarea>
-          </div>
-          <button class="save-settings" onclick="saveSettings()">Save settings</button>
-        </div>
       </div>
 
     </div>
@@ -691,27 +653,7 @@ button { font-family: var(--body); cursor: pointer; }
   </div>
 </div>
 
-<!-- RATING OVERLAY -->
-<div class="rating-overlay hidden" id="rating-overlay">
-  <div class="rating-box">
-    <div class="rating-box-head"><h3>Rate this post</h3></div>
-    <div class="rating-box-body">
-      <p>How good was this post? (0–10 scale via stars)</p>
-      <div class="big-stars" id="big-stars">
-        <span class="big-star" onclick="ratePost(2)">★</span>
-        <span class="big-star" onclick="ratePost(4)">★</span>
-        <span class="big-star" onclick="ratePost(6)">★</span>
-        <span class="big-star" onclick="ratePost(8)">★</span>
-        <span class="big-star" onclick="ratePost(10)">★</span>
-      </div>
-      <textarea class="rating-notes" id="rating-notes" placeholder="Optional notes — what made this post work or not work?"></textarea>
-    </div>
-    <div class="rating-box-foot">
-      <button class="btn" onclick="skipRating()">Skip</button>
-      <button class="btn btn-green" onclick="saveRating()">Save rating</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- GENERATING OVERLAY -->
 <div class="gen-overlay hidden" id="gen-overlay">
@@ -727,7 +669,7 @@ button { font-family: var(--body); cursor: pointer; }
 <script>
 // ── CONFIG ──
 let CFG = {
-  triggerUrl: '',
+  triggerUrl: 'https://meshminds.app.n8n.cloud/webhook-test/linkedin-trigger',
   approveUrl: '',
   rejectUrl: '',
   ideasSheetUrl: '',
@@ -738,7 +680,6 @@ let CFG = {
 let currentRating = 0;
 let currentIdea = null;
 let currentDraft = null;
-let postRating = 0;
 let postHistory = [];
 let localIdeas = [];
 
@@ -748,7 +689,6 @@ const pages = {
   'li-ideas-bank':  { root: 'LinkedIn',  page: 'My Ideas' },
   'li-analytics':   { root: 'LinkedIn',  page: 'Analytics' },
   'li-history':     { root: 'LinkedIn',  page: 'History' },
-  'settings':       { root: 'System',    page: 'Settings' },
 };
 
 // ── INIT ──
@@ -758,8 +698,7 @@ function init() {
   loadSettings();
   loadHistory();
   buildStreakGrid();
-  buildSparkline('followers-spark', [820,840,860,875,890,910,925,940,960,975,990,1005,1020,1040]);
-  buildSparkline('impressions-spark', [280,320,410,380,500,450,620,580,710,680,750,820,790,900]);
+  startPostingTimer();
 }
 
 // ── SETTINGS ──
@@ -767,7 +706,7 @@ function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem('daemien_cfg') || '{}');
     Object.assign(CFG, s);
-    document.getElementById('s-trigger').value = CFG.triggerUrl || '';
+    document.getElementById('s-trigger').value = CFG.triggerUrl || 'https://meshminds.app.n8n.cloud/webhook-test/linkedin-trigger';
     document.getElementById('s-approve').value = CFG.approveUrl || '';
     document.getElementById('s-reject').value = CFG.rejectUrl || '';
     document.getElementById('s-ideas-sheet').value = CFG.ideasSheetUrl || '';
@@ -816,7 +755,24 @@ function nav(id, btn) {
   }
 }
 
-// ── STREAK GRID ──
+// ── SETTINGS (minimal — just streak date and webhook URL) ──
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('daemien_cfg') || '{}');
+    Object.assign(CFG, s);
+    if (CFG.streakStart) {
+      const el = document.getElementById('s-streak-start');
+      if (el) el.value = CFG.streakStart;
+    }
+  } catch(e) {}
+}
+
+function saveStreakDate(val) {
+  CFG.streakStart = val;
+  localStorage.setItem('daemien_cfg', JSON.stringify(CFG));
+  buildStreakGrid();
+  toast('Streak start date saved ✓');
+}
 function buildStreakGrid() {
   const grid = document.getElementById('streak-grid');
   grid.innerHTML = '';
@@ -851,7 +807,7 @@ function buildStreakGrid() {
     grid.appendChild(div);
   }
   document.getElementById('streak-label').textContent =
-    currentDay > 0 ? `Day ${currentDay} / 30` : (start ? 'Challenge active' : 'Set start date in Settings');
+    currentDay > 0 ? `Day ${currentDay} / 30` : (start ? 'Challenge active' : 'Set start date below');
   document.getElementById('an-streak').textContent = currentDay || 0;
 }
 
@@ -859,20 +815,20 @@ function buildStreakGrid() {
 function refreshAnalytics() {
   const total = postHistory.length;
   const totalImpр = postHistory.reduce((a,p) => a + (parseInt(p.impressions)||0), 0);
-  const rated = postHistory.filter(p => p.daniel_rating);
-  const avgRating = rated.length ? (rated.reduce((a,p) => a + parseFloat(p.daniel_rating), 0) / rated.length).toFixed(1) : '—';
   document.getElementById('ov-posts').textContent = total;
   document.getElementById('ov-posts-note').textContent = total > 0 ? `${total} total` : '—';
-  document.getElementById('ov-rating').textContent = avgRating;
   document.getElementById('ov-impressions').textContent = totalImpр > 0 ? (totalImpр > 999 ? (totalImpр/1000).toFixed(1)+'k' : totalImpр) : '—';
   document.getElementById('an-posts').textContent = total;
   document.getElementById('an-posts-d').textContent = total > 0 ? `${total} published` : '—';
   document.getElementById('an-impr').textContent = totalImpр > 999 ? (totalImpр/1000).toFixed(1)+'k' : (totalImpр || '—');
-  document.getElementById('an-rating').textContent = avgRating;
   document.getElementById('flow-posts').textContent = total || '—';
-  document.getElementById('flow-score').textContent = avgRating;
-  // impressions chart
-  const last14 = postHistory.slice(-14);
+  // sparklines from real data
+  const impData = postHistory.slice(-14).map(p => parseInt(p.impressions)||0);
+  if (impData.length > 1) buildSparkline('impressions-spark', impData);
+  else document.getElementById('impressions-spark').innerHTML =
+    '<div style="font-family:var(--mono);font-size:8px;color:var(--ink3);padding:4px 0;">No data yet</div>';
+  document.getElementById('followers-spark').innerHTML =
+    '<div style="font-family:var(--mono);font-size:8px;color:var(--ink3);padding:4px 0;">Manual tracking — add via Settings</div>';
   const impChart = document.getElementById('imp-chart');
   if (last14.length > 0) {
     const max = Math.max(...last14.map(p => parseInt(p.impressions)||0));
@@ -887,23 +843,8 @@ function refreshAnalytics() {
   } else {
     impChart.innerHTML = '<div style="font-family:var(--mono);font-size:9px;color:var(--ink3);padding:20px;">No posts yet — data appears after first post</div>';
   }
-  // correlation
-  const hi = postHistory.filter(p => p.daniel_rating >= 8);
-  const mid = postHistory.filter(p => p.daniel_rating >= 5 && p.daniel_rating < 8);
-  const lo = postHistory.filter(p => p.daniel_rating < 5 && p.daniel_rating !== undefined && p.daniel_rating !== '');
-  const avg = arr => arr.length ? Math.round(arr.reduce((a,p) => a + (parseInt(p.impressions)||0), 0) / arr.length) : 0;
-  const hiAvg = avg(hi), midAvg = avg(mid), loAvg = avg(lo);
-  const corrMax = Math.max(hiAvg, midAvg, loAvg, 1);
-  document.getElementById('corr-hi').style.width = Math.round((hiAvg/corrMax)*100)+'%';
-  document.getElementById('corr-mid').style.width = Math.round((midAvg/corrMax)*100)+'%';
-  document.getElementById('corr-lo').style.width = Math.round((loAvg/corrMax)*100)+'%';
-  document.getElementById('corr-hi-n').textContent = hiAvg > 0 ? hiAvg+' avg' : '—';
-  document.getElementById('corr-mid-n').textContent = midAvg > 0 ? midAvg+' avg' : '—';
-  document.getElementById('corr-lo-n').textContent = loAvg > 0 ? loAvg+' avg' : '—';
   // categories
-  const cats = {};
-  postHistory.forEach(p => { if (p.category) cats[p.category] = (cats[p.category]||0)+1; });
-  const catEl = document.getElementById('cat-section');
+  document.getElementById('cat-section');
   const catMax = Math.max(...Object.values(cats), 1);
   catEl.innerHTML = Object.entries(cats).sort((a,b) => b[1]-a[1]).map(([k,v]) =>
     `<div class="corr-item"><div class="ci-lbl">${k}</div><div class="ci-track"><div class="ci-fill" style="width:${Math.round((v/catMax)*100)}%"></div></div><div class="ci-num">${v} post${v>1?'s':''}</div></div>`
@@ -930,7 +871,6 @@ function refreshHistory() {
       <div class="hm">${p.date||'—'}</div>
       <div class="hm">${impr}</div>
       <div class="hm">${cmts}</div>
-      <div class="score-num ${cls}">${scoreStr}</div>
       <div class="hm">${p.day_number ? 'Day '+p.day_number : '—'}</div>
     </div>`;
   }).join('');
@@ -988,22 +928,28 @@ async function startWorkflow() {
       const res = await fetch(CFG.triggerUrl);
       if (res.ok) {
         const data = await res.json();
-        if (data && data.title) { currentIdea = data; populateIdea(data); showState('idea'); document.getElementById('pending-badge').style.display=''; return; }
+        if (data && data.title) {
+          currentIdea = data;
+          populateIdea(data);
+          showState('idea');
+          document.getElementById('pending-badge').style.display='';
+          return;
+        }
       }
-    } catch(e) {}
+      throw new Error('Workflow returned no idea — check n8n logs');
+    } catch(e) {
+      showState('idle');
+      document.getElementById('run-btn').disabled = false;
+      document.getElementById('run-btn').textContent = '▶ Run now';
+      toast('Error: ' + e.message);
+      return;
+    }
+  } else {
+    showState('idle');
+    document.getElementById('run-btn').disabled = false;
+    document.getElementById('run-btn').textContent = '▶ Run now';
+    toast('No trigger URL set — go to Settings');
   }
-  // demo fallback
-  currentIdea = {
-    title: "Vor einer Woche hätte ich dir nicht gesagt, dass ich eine Website mit Claude bauen kann",
-    hook: "Ich hatte Angst vor dem Terminal. Heute habe ich eine funktionierende Website mit LLM-Integration gebaut — in einer Woche, ohne eine Zeile Code zu schreiben.",
-    angle: "Beginner journal",
-    source: "Persönliche Erfahrung mit Cursor",
-    why: "Passt perfekt zum 30-Tage-Challenge-Thema. Ehrliche Anfänger-Perspektive die kein AI-Experte schreiben kann.",
-    resume_url: null,
-  };
-  populateIdea(currentIdea);
-  showState('idea');
-  document.getElementById('pending-badge').style.display='';
 }
 
 function populateIdea(idea) {
@@ -1036,36 +982,33 @@ async function approveIdea() {
   const btn = document.getElementById('approve-btn');
   btn.textContent = 'Generating…';
   btn.disabled = true;
-  if (currentIdea?.resume_url) {
-    try { await fetch(currentIdea.resume_url + '?action=approve', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ approved: true, rating: currentRating }) }); } catch(e) {}
-  }
   document.getElementById('gen-overlay').classList.remove('hidden');
-  await delay(2800);
+  if (currentIdea?.resume_url) {
+    try {
+      const res = await fetch(currentIdea.resume_url + '?action=approve', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ approved: true, rating: currentRating })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        currentDraft = data.post_text || data.text || data.output || JSON.stringify(data);
+      } else { throw new Error('n8n returned ' + res.status); }
+    } catch(e) {
+      document.getElementById('gen-overlay').classList.add('hidden');
+      btn.textContent = 'Generate post →'; btn.disabled = false;
+      toast('Error getting draft: ' + e.message); return;
+    }
+  } else {
+    document.getElementById('gen-overlay').classList.add('hidden');
+    btn.textContent = 'Generate post →'; btn.disabled = false;
+    toast('No resume URL — workflow must return resume_url in idea JSON'); return;
+  }
   document.getElementById('gen-overlay').classList.add('hidden');
-  currentDraft = generateDemoDraft(currentIdea);
   document.getElementById('pending-badge').style.display = 'none';
   showState('draft');
   toast('Post generated ✓');
-}
-
-function generateDemoDraft(idea) {
-  return `Vor einer Woche hätte ich dir nicht gesagt, dass ich eine Website mit LLM-Integration bauen kann.
-
-Ich hatte Angst vor dem Terminal. Ich hatte noch nie eine Zeile Code geschrieben. Mit 3-4 Stunden Cursor-Lernen hat es trotzdem geklappt.
-
-Wie?
-
-Ich frage Claude bei jedem Schritt. Nicht "schreib mir den Code" — sondern "erkläre mir was dieser Code macht, dann schreib ihn".
-
-Der Unterschied: Ich verstehe was passiert. Ich kann Fehler finden. Ich lerne dabei.
-
-Was ich gebaut habe: Eine Website die automatisch Berechnungen macht, die Claude API connected, und ein LLM als Backend nutzt. In einer Woche. Ohne Vorkenntnisse.
-
-Die Frage die mich seither beschäftigt: Wie entwickelt sich die Software-Wirtschaft weiter, wenn Building so zugänglich wird?
-
-Werden Menschen noch für Apps zahlen? Wahrscheinlich nicht für einfache. Aber für gute Lösungen komplexer Probleme — ja.
-
-Was denkst du? Baut du selbst mit KI-Tools?`;
+  markPostingTimer();
 }
 
 function openDraft() {
@@ -1101,30 +1044,10 @@ async function requestRewrite() {
 
 function markPublished() {
   closeDraft();
-  document.getElementById('rating-overlay').classList.remove('hidden');
-}
-
-// ── POST RATING ──
-function ratePost(val) {
-  postRating = val;
-  const stars = document.querySelectorAll('.big-star');
-  const filled = Math.round(val / 2);
-  stars.forEach((s,i) => s.classList.toggle('lit', i < filled));
-}
-
-function skipRating() {
-  document.getElementById('rating-overlay').classList.add('hidden');
   finalizePost(null, '');
 }
 
-function saveRating() {
-  const notes = document.getElementById('rating-notes').value;
-  document.getElementById('rating-overlay').classList.add('hidden');
-  finalizePost(postRating, notes);
-  postRating = 0;
-  document.querySelectorAll('.big-star').forEach(s => s.classList.remove('lit'));
-  document.getElementById('rating-notes').value = '';
-}
+
 
 function finalizePost(rating, notes) {
   const post = {
@@ -1189,7 +1112,7 @@ function addLocalIdea(row) {
       <span class="idea-item-date">${row.added_on}</span>
     </div>`;
   list.prepend(el);
-  document.getElementById('ideas-count').textContent = localIdeas.length + ' idea' + (localIdeas.length === 1 ? '' : 's');
+
 }
 
 // ── CHARTS ──
@@ -1213,6 +1136,69 @@ function buildSparkline(id, data) {
   }).join('');
 }
 
+// ── POSTING TIMER ──
+function startPostingTimer() {
+  updateTimer();
+  setInterval(updateTimer, 60000);
+}
+
+function updateTimer() {
+  const countdown = document.getElementById('timer-countdown');
+  const fill = document.getElementById('timer-fill');
+  const right = document.getElementById('timer-right');
+  // find last post date
+  const last = postHistory.length > 0
+    ? postHistory.reduce((a, b) => (a.date > b.date ? a : b))
+    : null;
+  const now = new Date();
+  const todayStart = new Date(now); todayStart.setHours(0,0,0,0);
+  const tomorrowPost = new Date(todayStart); tomorrowPost.setDate(todayStart.getDate() + 1);
+  tomorrowPost.setHours(9, 0, 0, 0); // target: post by 9am next day
+  // check if already posted today
+  const todayStr = now.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'2-digit'});
+  const postedToday = last && (last.date === todayStr || last.date === now.toISOString().split('T')[0]);
+  if (postedToday) {
+    const msUntil = tomorrowPost - now;
+    const h = Math.floor(msUntil / 3600000);
+    const m = Math.floor((msUntil % 3600000) / 60000);
+    countdown.textContent = `${h}h ${m}m`;
+    countdown.className = 'timer-countdown';
+    fill.style.width = '100%';
+    fill.className = 'timer-fill';
+    right.textContent = '✓ Posted today — next window in ' + h + 'h';
+    return;
+  }
+  // not posted today — count down to end of day (midnight)
+  const endOfDay = new Date(todayStart); endOfDay.setDate(todayStart.getDate() + 1);
+  const msLeft = endOfDay - now;
+  const totalDay = 86400000;
+  const elapsed = totalDay - msLeft;
+  const pct = Math.min(100, Math.round((elapsed / totalDay) * 100));
+  const h = Math.floor(msLeft / 3600000);
+  const m = Math.floor((msLeft % 3600000) / 60000);
+  if (h < 3) {
+    countdown.textContent = `${h}h ${m}m left today`;
+    countdown.className = 'timer-countdown urgent';
+    fill.className = 'timer-fill urgent';
+    right.textContent = '⚠ Post soon to keep the streak';
+  } else if (msLeft < 0) {
+    countdown.textContent = 'Overdue';
+    countdown.className = 'timer-countdown overdue';
+    fill.className = 'timer-fill overdue';
+    right.textContent = '✕ No post today — streak broken';
+  } else {
+    countdown.textContent = `${h}h ${m}m left today`;
+    countdown.className = 'timer-countdown';
+    fill.className = 'timer-fill';
+    right.textContent = last ? `Last post: ${last.date}` : 'No posts yet';
+  }
+  fill.style.width = pct + '%';
+}
+
+function markPostingTimer() {
+  updateTimer();
+}
+
 // ── UTILS ──
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -1225,8 +1211,7 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeDraft();
-    document.getElementById('rating-overlay').classList.add('hidden');
-  }
+    }
 });
 
 init();
