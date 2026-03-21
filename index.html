@@ -987,7 +987,18 @@ async function startManual() {
       const errText = await res.text().catch(() => '');
       throw new Error(`n8n returned ${res.status}${errText ? ': ' + errText.substring(0,100) : ''}`);
     }
-    const data = await res.json();
+    const text = await res.text();
+    if (!text || text.trim() === '') {
+      showState('idle');
+      toast('Workflow triggered ✓ — check your pending_draft sheet for the generated post');
+      return;
+    }
+    let data;
+    try { data = JSON.parse(text); } catch(e) {
+      showState('idle');
+      toast('Workflow ran but returned unexpected format — check pending_draft sheet');
+      return;
+    }
     if (data && data.title) {
       currentIdea = data;
       populateIdea(data);
