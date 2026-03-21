@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn content hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: #E2E0D8;
+    --border-strong: #C8C5BB;
+    --text: #1A1916;
+    --text-2: #6B6860;
+    --text-3: #A8A69E;
+    --green: #1A6B4A;
+    --green-bg: #E8F4EF;
+    --green-mid: #2D9E6B;
+    --amber: #92580A;
+    --amber-bg: #FDF3E3;
+    --red: #8B2020;
+    --red-bg: #FDEAEA;
+    --accent: #1A6B4A;
+    --mono: 'DM Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'Instrument Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Layout */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--text);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-icon svg { width: 14px; height: 14px; }
+
+  .logo-name {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .logo-name span {
+    display: block;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .nav {
+    padding: 20px 12px;
+    flex: 1;
+  }
+
+  .nav-section {
+    margin-bottom: 24px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 0 12px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--text-2);
+    transition: background 0.12s, color 0.12s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+
+  .nav-item.active {
+    background: var(--surface2);
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .nav-item-left { display: flex; align-items: center; gap: 10px; }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-dot { background: var(--green-mid); }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .badge-pending { background: var(--amber-bg); color: var(--amber); }
+  .badge-new { background: var(--green-bg); color: var(--green); }
+  .badge-done { background: var(--surface2); color: var(--text-3); }
+
+  .sidebar-footer {
+    padding: 16px 24px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .run-info {
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+
+  .run-info strong { color: var(--text-2); font-weight: 500; }
+
+  /* Main content */
+  .main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .page-sub {
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    background: var(--surface);
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green-mid);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .content { padding: 36px 40px; }
+
+  /* Screens */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadein 0.2s ease; }
+
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* Ideas screen */
+  .ideas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .idea-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+
+  .idea-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .idea-card.selected {
+    border: 2px solid var(--green-mid);
+    background: var(--green-bg);
+  }
+
+  .idea-card.selected .idea-title { color: var(--green); }
+
+  .idea-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .idea-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+
+  .idea-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .idea-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .idea-tag {
+    font-size: 11.5px;
+    color: var(--text-2);
+    font-family: var(--mono);
+  }
+
+  .idea-tag strong { color: var(--text); font-weight: 500; }
+
+  .idea-hook {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-2);
+    font-style: italic;
+    line-height: 1.5;
+    border-left: 3px solid var(--border-strong);
+  }
+
+  .idea-card.selected .idea-hook {
+    background: rgba(255,255,255,0.5);
+    border-left-color: var(--green-mid);
+  }
+
+  .select-indicator {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-strong);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .idea-card.selected .select-indicator {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+  }
+
+  .check-icon { display: none; }
+  .idea-card.selected .check-icon { display: block; }
+
+  /* Draft screen */
+  .draft-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .draft-topbar {
+    padding: 12px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .draft-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    font-family: var(--mono);
+  }
+
+  .word-count {
+    font-size: 11px;
+    color: var(--text-3);
+    font-family: var(--mono);
+  }
+
+  .draft-body {
+    padding: 22px 24px;
+  }
+
+  .draft-title-area {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .draft-text {
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-line;
+  }
+
+  .notes-area {
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+    line-height: 1.6;
+  }
+
+  textarea:focus { border-color: var(--border-strong); }
+  textarea::placeholder { color: var(--text-3); }
+
+  /* Rating screen */
+  .post-recap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+  }
+
+  .post-recap-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .post-recap-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .rating-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .rating-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .rating-title { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  .rating-score {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .rating-score span {
+    font-family: var(--sans);
+    font-size: 16px;
+    color: var(--text-3);
+    font-weight: 400;
+  }
+
+  .rating-descriptor {
+    font-size: 12.5px;
+    color: var(--text-2);
+    font-style: italic;
+    margin-bottom: 16px;
+    min-height: 18px;
+    font-family: var(--mono);
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .slider-bound {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    min-width: 12px;
+  }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  /* Buttons */
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover { background: #333; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+
+  .btn-secondary:hover { background: var(--surface2); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red-bg);
+  }
+
+  .btn-danger:hover { background: var(--red-bg); }
+
+  /* Success state */
+  .success-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: var(--green-bg);
+    border: 1px solid #A8DCC4;
+    border-radius: 8px;
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: var(--green);
+  }
+
+  .success-banner.show { display: flex; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* History screen */
+  .history-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .history-score {
+    font-family: var(--serif);
+    font-size: 24px;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .history-score.high { color: var(--green); }
+  .history-score.mid { color: var(--amber); }
+  .history-score.low { color: var(--red); }
+
+  .history-info { flex: 1; }
+
+  .history-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .history-meta {
+    font-size: 11.5px;
+    color: var(--text-3);
+    font-family: var(--mono);
+  }
+
+  .history-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .history-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--green-mid);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px; }
+    .topbar { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2h3v10H2zM6 7h6M9 4l3 3-3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-name">
+            Content hub
+            <span>LinkedIn autopilot</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section">
+        <div class="nav-label">Pending</div>
+        <button class="nav-item active" onclick="showScreen('ideas')">
+          <span class="nav-item-left">
+            <span class="nav-dot"></span>
+            Idea selection
+          </span>
+          <span class="badge badge-pending">1</span>
+        </button>
+        <button class="nav-item" onclick="showScreen('draft')">
+          <span class="nav-item-left">
+            <span class="nav-dot"></span>
+            Draft review
+          </span>
+          <span class="badge badge-pending">1</span>
+        </button>
+        <button class="nav-item" onclick="showScreen('rating')">
+          <span class="nav-item-left">
+            <span class="nav-dot"></span>
+            Rate a post
+          </span>
+        </button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Archive</div>
+        <button class="nav-item" onclick="showScreen('history')">
+          <span class="nav-item-left">
+            <span class="nav-dot"></span>
+            Post history
+          </span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="run-info">
+        <strong>Last run:</strong> today, 08:00<br>
+        <strong>Next run:</strong> tomorrow, 08:00<br>
+        <strong>Posts published:</strong> 14
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Choose an idea</div>
+        <div class="page-sub" id="page-sub">Run · Saturday 21 Mar 2026 · 08:00</div>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        Workflow active
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- IDEAS SCREEN -->
+      <div class="screen active" id="screen-ideas">
+        <div class="ideas-grid">
+
+          <div class="idea-card selected" onclick="selectIdea(this, 0)">
+            <div class="idea-header">
+              <div>
+                <div class="idea-num">Idea 01</div>
+                <div class="idea-title">Why most AI automation projects fail in week 3</div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:8px; flex-shrink:0;">
+                <span class="badge badge-new">Top pick</span>
+                <div class="select-indicator">
+                  <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="idea-meta">
+              <div class="idea-tag"><strong>Angle:</strong> contrarian + personal story</div>
+              <div class="idea-tag"><strong>Format:</strong> list + insight</div>
+            </div>
+            <div class="idea-hook">"I've watched AI automation projects die the same death 6 times now…"</div>
+          </div>
+
+          <div class="idea-card" onclick="selectIdea(this, 1)">
+            <div class="idea-header">
+              <div>
+                <div class="idea-num">Idea 02</div>
+                <div class="idea-title">The N8N node nobody talks about (but absolutely should)</div>
+              </div>
+              <div class="select-indicator">
+                <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="idea-meta">
+              <div class="idea-tag"><strong>Angle:</strong> hidden gem / tutorial</div>
+              <div class="idea-tag"><strong>Format:</strong> short how-to</div>
+            </div>
+            <div class="idea-hook">"I stumbled on this by accident and it's saved me 3 hours a week…"</div>
+          </div>
+
+          <div class="idea-card" onclick="selectIdea(this, 2)">
+            <div class="idea-header">
+              <div>
+                <div class="idea-num">Idea 03</div>
+                <div class="idea-title">I automated my LinkedIn posting. Here's what I actually learned</div>
+              </div>
+              <div class="select-indicator">
+                <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="idea-meta">
+              <div class="idea-tag"><strong>Angle:</strong> meta / behind the scenes</div>
+              <div class="idea-tag"><strong>Format:</strong> narrative</div>
+            </div>
+            <div class="idea-hook">"Yes, this post was written by AI. Here's the honest truth about that…"</div>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="approveIdea()">Generate full draft</button>
+          <button class="btn btn-secondary" onclick="regenerate()">Regenerate ideas</button>
+        </div>
+
+        <div class="success-banner" id="ideas-success">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Selection sent to N8N — full draft being generated now.
+        </div>
+      </div>
+
+      <!-- DRAFT SCREEN -->
+      <div class="screen" id="screen-draft">
+        <div class="draft-box">
+          <div class="draft-topbar">
+            <div class="draft-label">Draft</div>
+            <div class="word-count" id="word-count">148 words</div>
+          </div>
+          <div class="draft-body">
+            <div class="draft-text" id="draft-content">I've watched AI automation projects die the same death 6 times.
+
+Week 1: excitement.
+Week 2: real progress.
+Week 3: everything breaks.
+
+It's never the technology. It's always the same 3 things nobody covers in the tutorial videos:
+
+1/ No human in the loop for edge cases
+The automation works perfectly — until it doesn't. And when it fails with no oversight, it fails loudly.
+
+2/ The prompt worked in testing, not production
+Real data is messier than your test data. Always.
+
+3/ Nobody owns the maintenance
+"Set and forget" is a myth. Automations need tending.
+
+The fix is simpler than you think:
+
+Build in a weekly 15-min review. Keep a human approval step for anything customer-facing. Document your edge cases as you find them.
+
+Automation isn't a destination. It's a practice.</div>
+          </div>
+        </div>
+
+        <div class="notes-area">
+          <div class="field-label">Your notes</div>
+          <textarea id="draft-notes" rows="3" placeholder="Make it punchier. Add a CTA. Remove point 2. Change the tone…"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="approveDraft()">Approve &amp; schedule</button>
+          <button class="btn btn-secondary" onclick="requestRewrite()">Rewrite with notes</button>
+          <button class="btn btn-danger" onclick="rejectDraft()">Discard</button>
+        </div>
+
+        <div class="success-banner" id="draft-success">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Post approved — scheduled for today at 12:00.
+        </div>
+      </div>
+
+      <!-- RATING SCREEN -->
+      <div class="screen" id="screen-rating">
+        <div class="post-recap">
+          <div class="post-recap-header">
+            <div>
+              <div class="idea-num">Posted · Mon 18 Mar</div>
+              <div class="post-recap-title">Why most AI automation projects fail in week 3</div>
+            </div>
+            <span class="badge badge-done">Published</span>
+          </div>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-val">847</div>
+              <div class="stat-label">Impressions</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">34</div>
+              <div class="stat-label">Likes</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">12</div>
+              <div class="stat-label">Comments</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">4.0%</div>
+              <div class="stat-label">Eng. rate</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rating-section">
+          <div class="rating-label-row">
+            <div class="rating-title">Your rating</div>
+            <div class="rating-score" id="rating-display">7 <span>/ 10</span></div>
+          </div>
+          <div class="rating-descriptor" id="rating-descriptor">Good — worth repeating this format</div>
+          <div class="slider-row">
+            <span class="slider-bound">0</span>
+            <input type="range" id="rating-slider" min="0" max="10" step="1" value="7" oninput="updateRating(this.value)">
+            <span class="slider-bound">10</span>
+          </div>
+        </div>
+
+        <div class="notes-area">
+          <div class="field-label">What worked / what didn't</div>
+          <textarea id="rating-notes" rows="3" placeholder="The hook was strong. List format worked well. Could use a stronger CTA at the end…"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="saveRating()">Save feedback</button>
+        </div>
+
+        <div class="success-banner" id="rating-success">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Feedback saved to Google Sheets — next run will learn from this.
+        </div>
+      </div>
+
+      <!-- HISTORY SCREEN -->
+      <div class="screen" id="screen-history">
+        <div style="margin-bottom: 20px;">
+          <div class="field-label" style="margin-bottom:4px;">14 posts · avg rating 6.8</div>
+        </div>
+
+        <div class="history-row">
+          <div class="history-score high">9</div>
+          <div class="history-info">
+            <div class="history-title">Why most AI automation projects fail in week 3</div>
+            <div class="history-meta">18 Mar · 847 impressions · 34 likes</div>
+          </div>
+          <div class="history-bar"><div class="history-fill" style="width:90%"></div></div>
+        </div>
+
+        <div class="history-row">
+          <div class="history-score high">8</div>
+          <div class="history-info">
+            <div class="history-title">3 things I wish I knew before building my first N8N workflow</div>
+            <div class="history-meta">14 Mar · 1.2k impressions · 51 likes</div>
+          </div>
+          <div class="history-bar"><div class="history-fill" style="width:80%"></div></div>
+        </div>
+
+        <div class="history-row">
+          <div class="history-score mid">6</div>
+          <div class="history-info">
+            <div class="history-title">The future of no-code automation</div>
+            <div class="history-meta">10 Mar · 320 impressions · 12 likes</div>
+          </div>
+          <div class="history-bar"><div class="history-fill" style="width:60%; background: #EF9F27;"></div></div>
+        </div>
+
+        <div class="history-row">
+          <div class="history-score mid">5</div>
+          <div class="history-info">
+            <div class="history-title">Tools I use every day as a solo founder</div>
+            <div class="history-meta">6 Mar · 290 impressions · 9 likes</div>
+          </div>
+          <div class="history-bar"><div class="history-fill" style="width:50%; background: #EF9F27;"></div></div>
+        </div>
+
+        <div class="history-row">
+          <div class="history-score low">3</div>
+          <div class="history-info">
+            <div class="history-title">Thoughts on AI in 2026</div>
+            <div class="history-meta">2 Mar · 178 impressions · 4 likes</div>
+          </div>
+          <div class="history-bar"><div class="history-fill" style="width:30%; background: #E24B4A;"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const WEBHOOK_BASE = 'YOUR_N8N_WEBHOOK_URL';
+
+  const pageMeta = {
+    ideas:   { title: 'Choose an idea',    sub: 'Run · Saturday 21 Mar 2026 · 08:00' },
+    draft:   { title: 'Review your draft', sub: 'Generated from idea 01 · 148 words' },
+    rating:  { title: 'Rate this post',    sub: 'Posted Mon 18 Mar · 3 days ago' },
+    history: { title: 'Post history',      sub: '14 posts · all time' },
+  };
+
+  let selectedIdea = 0;
+
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    const m = pageMeta[name];
+    document.getElementById('page-title').textContent = m.title;
+    document.getElementById('page-sub').textContent = m.sub;
+    const navMap = { ideas: 0, draft: 1, rating: 2, history: 3 };
+    document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
+  }
+
+  function selectIdea(card, idx) {
+    document.querySelectorAll('.idea-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedIdea = idx;
+  }
+
+  function approveIdea() {
+    const titles = [
+      'Why most AI automation projects fail in week 3',
+      'The N8N node nobody talks about (but absolutely should)',
+      'I automated my LinkedIn posting. Here\'s what I actually learned'
+    ];
+    callWebhook('idea_selected', { idea_index: selectedIdea, idea_title: titles[selectedIdea] });
+    document.getElementById('ideas-success').classList.add('show');
+  }
+
+  function regenerate() {
+    callWebhook('regenerate_ideas', {});
+    alert('Regenerating ideas — refresh in ~30 seconds.');
+  }
+
+  function approveDraft() {
+    const notes = document.getElementById('draft-notes').value;
+    callWebhook('draft_approved', { notes });
+    document.getElementById('draft-success').classList.add('show');
+  }
+
+  function requestRewrite() {
+    const notes = document.getElementById('draft-notes').value;
+    callWebhook('rewrite_requested', { notes });
+    alert('Rewrite requested — refresh in ~30 seconds.');
+  }
+
+  function rejectDraft() {
+    if (confirm('Discard this draft?')) {
+      callWebhook('draft_rejected', {});
+    }
+  }
+
+  const descriptors = [
+    'Skip — not worth publishing',
+    'Below expectations',
+    'Weak — needs major rework',
+    'Mediocre — some things worked',
+    'Okay — but forgettable',
+    'Decent — close to the mark',
+    'Good — worth repeating this format',
+    'Strong — one of the better posts',
+    'Really strong — use as template',
+    'Excellent — near perfect',
+    'Perfect — use as gold standard example'
+  ];
+
+  function updateRating(v) {
+    document.getElementById('rating-display').innerHTML = v + ' <span>/ 10</span>';
+    document.getElementById('rating-descriptor').textContent = descriptors[parseInt(v)];
+  }
+
+  function saveRating() {
+    const score = document.getElementById('rating-slider').value;
+    const notes = document.getElementById('rating-notes').value;
+    callWebhook('post_rated', { score: parseInt(score), notes, post_title: 'Why most AI automation projects fail in week 3' });
+    document.getElementById('rating-success').classList.add('show');
+  }
+
+  async function callWebhook(event, data) {
+    const payload = { event, timestamp: new Date().toISOString(), ...data };
+    console.log('Sending to N8N:', payload);
+    try {
+      await fetch(WEBHOOK_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      console.warn('Webhook call failed (expected in demo):', e.message);
+    }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view');
+  if (view && ['ideas', 'draft', 'rating', 'history'].includes(view)) {
+    showScreen(view);
+  }
+</script>
+</body>
+</html>
