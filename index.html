@@ -464,32 +464,43 @@ button { font-family: var(--body); cursor: pointer; }
       <div class="screen" id="screen-li-run">
         <div class="run-hero">
           <div class="run-hero-left">
-            <h2>Run Workflow</h2>
-            <p>LinkedIn Autoposter · Generate, review & approve</p>
+            <h2>Write Post</h2>
+            <p>Type your thought → AI writes the post</p>
           </div>
           <div class="run-btns">
             <button class="btn" onclick="resetWorkflow()">Reset</button>
-            <button class="btn btn-primary" id="run-btn" onclick="startWorkflow()">▶ Run now</button>
           </div>
         </div>
         <div class="workflow-states" id="wf-states">
           <div class="state-idle vis" id="state-idle">
-            <div class="idle-card">
-              <div class="idle-icon">◎</div>
-              <h3>Ready to run</h3>
-              <p>Click "Run now" to generate today's post idea</p>
-              <button class="btn btn-primary" onclick="startWorkflow()">▶ Start workflow</button>
+            <div style="max-width:600px;padding:0;">
+              <div style="margin-bottom:10px;">
+                <label style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);display:block;margin-bottom:8px;">Your thought for today</label>
+                <textarea id="manual-idea" style="width:100%;font-family:var(--body);font-size:14px;line-height:1.6;color:var(--ink);background:var(--surf);border:1px solid var(--line2);padding:16px;outline:none;resize:none;height:140px;transition:border-color .15s;" placeholder="Write your raw thought here — what happened today, what you tried, what surprised you, what you learned. Don't polish it. The AI does that." onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--line2)'"></textarea>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);" id="thought-chars">0 / 500 chars</span>
+                <button class="btn btn-primary" id="run-btn" onclick="startWorkflow()">▶ Generate post</button>
+              </div>
+              <div style="margin-top:20px;padding:14px 16px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--ink);">
+                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:6px;">Examples of good raw thoughts</div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.8;">
+                  "Heute Cursor zum ersten Mal bei der Arbeit benutzt. Hat mir 1 Stunde gespart aber ich musste den Code 3x erklären lassen."<br>
+                  "War beim Berlin AI Meetup. 200 Leute. Alle reden über Agents aber niemand hat was live."<br>
+                  "Etsy hat mir heute eine Email geschickt — Top 1% global. Ich dachte das sei normal bis mein Kollege meinte es sei nicht normal."
+                </div>
+              </div>
             </div>
           </div>
           <div class="state-running" id="state-running">
             <div class="running-card">
-              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);">Workflow running</div>
-              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;">Fetching signals</div>
+              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);">Generating your post</div>
+              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;">Writing…</div>
               <div class="progress-steps">
-                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Fetching sources — Luma, Indie Hackers, idea bank</div>
-                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Scoring topics by relevance</div>
-                <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Generating idea + hook</div>
-                <div class="pstep" id="pstep-3"><div class="pstep-dot"></div>Awaiting your approval</div>
+                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Sending your thought to Claude</div>
+                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Applying your voice and format</div>
+                <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Writing the post</div>
+                <div class="pstep" id="pstep-3"><div class="pstep-dot"></div>Draft ready</div>
               </div>
             </div>
           </div>
@@ -901,54 +912,55 @@ function showState(s) {
 function resetWorkflow() {
   currentRating = 0; currentIdea = null; currentDraft = null;
   showState('idle');
-  document.getElementById('run-btn').disabled = false;
-  document.getElementById('run-btn').textContent = '▶ Run now';
+  const btn = document.getElementById('run-btn');
+  if (btn) { btn.disabled = false; btn.textContent = '▶ Generate post'; }
   document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
-  document.getElementById('rating-txt').textContent = '—';
-  document.getElementById('approve-btn').textContent = 'Generate post →';
-  document.getElementById('approve-btn').disabled = false;
   for (let i=0;i<4;i++) {
     const el = document.getElementById('pstep-'+i);
-    el.classList.remove('done','active');
-    if (i===0) el.classList.add('active');
+    if (el) { el.classList.remove('done','active'); if (i===0) el.classList.add('active'); }
   }
 }
 
+// char counter
+setTimeout(() => {
+  const ta = document.getElementById('manual-idea');
+  if (ta) ta.addEventListener('input', () => {
+    const el = document.getElementById('thought-chars');
+    if (el) el.textContent = ta.value.length + ' / 500 chars';
+  });
+}, 100);
+
 async function startWorkflow() {
-  document.getElementById('run-btn').disabled = true;
+  const thought = document.getElementById('manual-idea').value.trim();
+  if (!thought) { toast('Write your thought first'); return; }
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
   showState('running');
   for (let i = 0; i < 4; i++) {
-    await delay(900);
+    await delay(700);
     document.getElementById('pstep-'+i).classList.add('done');
     document.getElementById('pstep-'+i).classList.remove('active');
     if (i+1 < 4) document.getElementById('pstep-'+(i+1)).classList.add('active');
   }
-  if (CFG.triggerUrl) {
-    try {
-      const res = await fetch(CFG.triggerUrl);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.title) {
-          currentIdea = data;
-          populateIdea(data);
-          showState('idea');
-          document.getElementById('pending-badge').style.display='';
-          return;
-        }
-      }
-      throw new Error('Workflow returned no idea — check n8n logs');
-    } catch(e) {
-      showState('idle');
-      document.getElementById('run-btn').disabled = false;
-      document.getElementById('run-btn').textContent = '▶ Run now';
-      toast('Error: ' + e.message);
-      return;
-    }
-  } else {
+  try {
+    const res = await fetch(CFG.triggerUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ manual_idea: thought })
+    });
+    if (!res.ok) throw new Error('n8n returned ' + res.status);
+    const data = await res.json();
+    currentDraft = data.post_text || data.text || data.output || null;
+    if (!currentDraft) throw new Error('No post text in response — check n8n output field name');
+    currentIdea = { title: thought.substring(0, 60) };
+    showState('draft');
+    toast('Post generated ✓');
+  } catch(e) {
     showState('idle');
-    document.getElementById('run-btn').disabled = false;
-    document.getElementById('run-btn').textContent = '▶ Run now';
-    toast('No trigger URL set — go to Settings');
+    btn.disabled = false;
+    btn.textContent = '▶ Generate post';
+    toast('Error: ' + e.message);
   }
 }
 
