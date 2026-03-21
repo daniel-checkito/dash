@@ -3,993 +3,1269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LinkedIn content hub</title>
+<title>Daemien</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #F7F6F2;
-    --surface: #FFFFFF;
-    --surface2: #F0EFE9;
-    --border: #E2E0D8;
-    --border-strong: #C8C5BB;
-    --text: #1A1916;
-    --text-2: #6B6860;
-    --text-3: #A8A69E;
-    --green: #1A6B4A;
-    --green-bg: #E8F4EF;
-    --green-mid: #2D9E6B;
-    --amber: #92580A;
-    --amber-bg: #FDF3E3;
-    --red: #8B2020;
-    --red-bg: #FDEAEA;
-    --accent: #1A6B4A;
-    --mono: 'DM Mono', monospace;
-    --serif: 'DM Serif Display', serif;
-    --sans: 'Instrument Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* Layout */
-  .shell {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: 100vh;
-  }
-
-  /* Sidebar */
-  .sidebar {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 28px 0;
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-  }
-
-  .logo {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo-mark {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo-icon {
-    width: 28px;
-    height: 28px;
-    background: var(--text);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .logo-icon svg { width: 14px; height: 14px; }
-
-  .logo-name {
-    font-family: var(--serif);
-    font-size: 15px;
-    color: var(--text);
-    line-height: 1.2;
-  }
-
-  .logo-name span {
-    display: block;
-    font-family: var(--sans);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-3);
-  }
-
-  .nav {
-    padding: 20px 12px;
-    flex: 1;
-  }
-
-  .nav-section {
-    margin-bottom: 24px;
-  }
-
-  .nav-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    padding: 0 12px;
-    margin-bottom: 6px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13.5px;
-    font-weight: 400;
-    color: var(--text-2);
-    transition: background 0.12s, color 0.12s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-  }
-
-  .nav-item:hover { background: var(--surface2); color: var(--text); }
-
-  .nav-item.active {
-    background: var(--surface2);
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .nav-item-left { display: flex; align-items: center; gap: 10px; }
-
-  .nav-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border-strong);
-    flex-shrink: 0;
-  }
-
-  .nav-item.active .nav-dot { background: var(--green-mid); }
-
-  .badge {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 500;
-  }
-
-  .badge-pending { background: var(--amber-bg); color: var(--amber); }
-  .badge-new { background: var(--green-bg); color: var(--green); }
-  .badge-done { background: var(--surface2); color: var(--text-3); }
-
-  .sidebar-footer {
-    padding: 16px 24px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .run-info {
-    font-size: 11px;
-    color: var(--text-3);
-    line-height: 1.6;
-  }
-
-  .run-info strong { color: var(--text-2); font-weight: 500; }
-
-  /* Main content */
-  .main {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .topbar {
-    padding: 20px 40px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  .page-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--text);
-  }
-
-  .page-sub {
-    font-size: 12.5px;
-    color: var(--text-3);
-    margin-top: 2px;
-    font-family: var(--mono);
-  }
-
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-2);
-    background: var(--surface);
-  }
-
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green-mid);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  .content { padding: 36px 40px; }
-
-  /* Screens */
-  .screen { display: none; }
-  .screen.active { display: block; animation: fadein 0.2s ease; }
-
-  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-
-  /* Ideas screen */
-  .ideas-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .idea-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 22px;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    position: relative;
-  }
-
-  .idea-card:hover {
-    border-color: var(--border-strong);
-  }
-
-  .idea-card.selected {
-    border: 2px solid var(--green-mid);
-    background: var(--green-bg);
-  }
-
-  .idea-card.selected .idea-title { color: var(--green); }
-
-  .idea-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .idea-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-3);
-    margin-bottom: 4px;
-  }
-
-  .idea-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-  }
-
-  .idea-meta {
-    display: flex;
-    gap: 16px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .idea-tag {
-    font-size: 11.5px;
-    color: var(--text-2);
-    font-family: var(--mono);
-  }
-
-  .idea-tag strong { color: var(--text); font-weight: 500; }
-
-  .idea-hook {
-    margin-top: 10px;
-    padding: 10px 14px;
-    background: var(--bg);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--text-2);
-    font-style: italic;
-    line-height: 1.5;
-    border-left: 3px solid var(--border-strong);
-  }
-
-  .idea-card.selected .idea-hook {
-    background: rgba(255,255,255,0.5);
-    border-left-color: var(--green-mid);
-  }
-
-  .select-indicator {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border-strong);
-    flex-shrink: 0;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-  }
-
-  .idea-card.selected .select-indicator {
-    background: var(--green-mid);
-    border-color: var(--green-mid);
-  }
-
-  .check-icon { display: none; }
-  .idea-card.selected .check-icon { display: block; }
-
-  /* Draft screen */
-  .draft-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 16px;
-  }
-
-  .draft-topbar {
-    padding: 12px 20px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .draft-label {
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    font-family: var(--mono);
-  }
-
-  .word-count {
-    font-size: 11px;
-    color: var(--text-3);
-    font-family: var(--mono);
-  }
-
-  .draft-body {
-    padding: 22px 24px;
-  }
-
-  .draft-title-area {
-    font-family: var(--serif);
-    font-size: 18px;
-    color: var(--text);
-    margin-bottom: 16px;
-    line-height: 1.3;
-  }
-
-  .draft-text {
-    font-size: 14.5px;
-    line-height: 1.75;
-    color: var(--text);
-    white-space: pre-line;
-  }
-
-  .notes-area {
-    margin-bottom: 20px;
-  }
-
-  .field-label {
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: 8px;
-    font-family: var(--mono);
-  }
-
-  textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: var(--sans);
-    font-size: 13.5px;
-    color: var(--text);
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.15s;
-    line-height: 1.6;
-  }
-
-  textarea:focus { border-color: var(--border-strong); }
-  textarea::placeholder { color: var(--text-3); }
-
-  /* Rating screen */
-  .post-recap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 24px;
-  }
-
-  .post-recap-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .post-recap-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-  }
-
-  .stats-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .stat-val {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--text-3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .rating-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
-  }
-
-  .rating-label-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 4px;
-  }
-
-  .rating-title { font-size: 14px; font-weight: 500; color: var(--text); }
-
-  .rating-score {
-    font-family: var(--serif);
-    font-size: 36px;
-    color: var(--text);
-    line-height: 1;
-  }
-
-  .rating-score span {
-    font-family: var(--sans);
-    font-size: 16px;
-    color: var(--text-3);
-    font-weight: 400;
-  }
-
-  .rating-descriptor {
-    font-size: 12.5px;
-    color: var(--text-2);
-    font-style: italic;
-    margin-bottom: 16px;
-    min-height: 18px;
-    font-family: var(--mono);
-  }
-
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .slider-bound {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-3);
-    min-width: 12px;
-  }
-
-  input[type=range] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--text);
-    cursor: pointer;
-    transition: transform 0.1s;
-  }
-
-  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-
-  /* Buttons */
-  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .btn {
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-family: var(--sans);
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.12s;
-    border: none;
-  }
-
-  .btn-primary {
-    background: var(--text);
-    color: var(--bg);
-  }
-
-  .btn-primary:hover { background: #333; }
-  .btn-primary:active { transform: scale(0.98); }
-
-  .btn-secondary {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border-strong);
-  }
-
-  .btn-secondary:hover { background: var(--surface2); }
-
-  .btn-danger {
-    background: transparent;
-    color: var(--red);
-    border: 1px solid var(--red-bg);
-  }
-
-  .btn-danger:hover { background: var(--red-bg); }
-
-  /* Success state */
-  .success-banner {
-    display: none;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 18px;
-    background: var(--green-bg);
-    border: 1px solid #A8DCC4;
-    border-radius: 8px;
-    margin-top: 16px;
-    font-size: 13.5px;
-    color: var(--green);
-  }
-
-  .success-banner.show { display: flex; }
-
-  /* Divider */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 24px 0;
-  }
-
-  /* History screen */
-  .history-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .history-score {
-    font-family: var(--serif);
-    font-size: 24px;
-    min-width: 36px;
-    text-align: center;
-  }
-
-  .history-score.high { color: var(--green); }
-  .history-score.mid { color: var(--amber); }
-  .history-score.low { color: var(--red); }
-
-  .history-info { flex: 1; }
-
-  .history-title {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 3px;
-  }
-
-  .history-meta {
-    font-size: 11.5px;
-    color: var(--text-3);
-    font-family: var(--mono);
-  }
-
-  .history-bar {
-    width: 80px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .history-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--green-mid);
-  }
-
-  /* Responsive */
-  @media (max-width: 640px) {
-    .shell { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .content { padding: 24px 20px; }
-    .topbar { padding: 16px 20px; }
-  }
+:root {
+  --bg: #FFFFFF;
+  --text: #0A0A0A;
+  --text2: #555555;
+  --text3: #AAAAAA;
+  --border: #E0E0E0;
+  --border2: #0A0A0A;
+  --red: #CC0000;
+  --green: #006600;
+  --surface: #F5F5F5;
+  --mono: 'IBM Plex Mono', monospace;
+  --cond: 'IBM Plex Sans Condensed', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--cond);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.shell {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  border-right: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.logo-block {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.logo-word {
+  font-family: var(--display);
+  font-size: 28px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.nav { flex: 1; }
+
+.nav-section { border-bottom: 1px solid var(--border); }
+
+.nav-section-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 10px 16px 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 16px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.1s, background 0.1s;
+  font-family: var(--cond);
+}
+
+.nav-item:hover { color: var(--text); background: var(--surface); }
+
+.nav-item.active {
+  color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.nav-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  opacity: 0.6;
+}
+
+.nav-item.active .nav-badge { border-color: rgba(255,255,255,0.4); }
+
+.sidebar-ext {
+  border-top: 1px solid var(--border2);
+  padding: 10px 0;
+}
+
+.ext-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.1s;
+}
+
+.ext-link:hover { color: var(--text); }
+
+.ext-link svg { width: 10px; height: 10px; flex-shrink: 0; }
+
+/* MAIN */
+.main { display: flex; flex-direction: column; }
+
+.topbar {
+  padding: 0 28px;
+  height: 44px;
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.topbar-page {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+
+.topbar-sep { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+.topbar-crumb {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sys-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.status-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.content { flex: 1; }
+
+/* Screens */
+.screen { display: none; }
+.screen.active { display: block; animation: in 0.15s ease; }
+@keyframes in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---- GRAPHIC BANNERS ---- */
+.graphic-banner {
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  height: 120px;
+  position: relative;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+}
+
+/* SVG dollar bill strip */
+.bill-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ---- LAYOUT BLOCKS ---- */
+.page-body { padding: 24px 28px; }
+
+.row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+.row:last-child { border-bottom: none; }
+
+.col { padding: 16px 20px; }
+.col + .col { border-left: 1px solid var(--border); }
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--border2);
+  margin-bottom: 24px;
+}
+
+.stat-block {
+  padding: 14px 18px;
+  border-right: 1px solid var(--border);
+}
+
+.stat-block:last-child { border-right: none; }
+
+.stat-val {
+  font-family: var(--display);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.stat-val.red { color: var(--red); }
+.stat-val.green { color: var(--green); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 3px;
+}
+
+.stat-delta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--green);
+  margin-top: 2px;
+}
+
+/* Section label */
+.sec-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text3);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 14px;
+}
+
+/* Project table */
+.project-table { border: 1px solid var(--border2); margin-bottom: 24px; }
+
+.project-thead {
+  display: grid;
+  grid-template-columns: 2fr 100px 80px 80px 80px 60px;
+  padding: 6px 14px;
+  background: var(--text);
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--bg);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  gap: 8px;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: 2fr 100px 80px 80px 80px 60px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.project-row:last-child { border-bottom: none; }
+.project-row:hover { background: var(--surface); }
+
+.project-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.proj-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.proj-desc {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.pill {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 2px 6px;
+  border: 1px solid var(--border2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.pill-live { border-color: var(--green); color: var(--green); }
+.pill-build { border-color: #AA6600; color: #AA6600; }
+.pill-off { border-color: var(--text3); color: var(--text3); }
+
+.cell-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+}
+
+.cell-num.muted { color: var(--text3); }
+
+.arrow-btn {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-align: right;
+  letter-spacing: 0.05em;
+}
+
+.project-row:hover .arrow-btn { color: var(--text); }
+
+/* Motivation ticker */
+.ticker {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 7px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 24px;
+}
+
+.ticker-inner {
+  display: inline-flex;
+  gap: 0;
+  animation: tick 30s linear infinite;
+}
+
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.ticker-item {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  padding: 0 24px;
+  text-transform: uppercase;
+}
+
+.ticker-item.accent { color: var(--red); }
+
+/* IDEAS PAGE */
+.ideas-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.run-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+}
+
+.run-tag strong { color: var(--text); }
+
+.btn {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  border: 1px solid var(--border2);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.btn:hover { background: var(--text); color: var(--bg); }
+
+.btn-primary-solid {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.btn-primary-solid:hover { background: #333; }
+
+.idea-rows { }
+
+.idea-row {
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 36px 1fr 220px;
+  min-height: 80px;
+}
+
+.idea-row:last-child { border-bottom: none; }
+
+.idea-num-cell {
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 18px;
+  color: var(--text3);
+}
+
+.idea-content { padding: 14px 20px; }
+
+.idea-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.idea-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+}
+
+.idea-hook {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text2);
+  font-style: italic;
+  line-height: 1.5;
+  border-left: 2px solid var(--border2);
+  padding-left: 8px;
+}
+
+.idea-actions {
+  border-left: 1px solid var(--border);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.stars-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stars-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.stars { display: flex; gap: 2px; }
+
+.star {
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--border2);
+  transition: color 0.1s;
+  user-select: none;
+  line-height: 1;
+}
+
+.star.lit { color: #CC8800; }
+.star:hover { color: #CC8800; transform: scale(1.1); }
+
+.rval {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  min-width: 28px;
+}
+
+.action-btns { display: flex; gap: 6px; }
+
+.btn-sm {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.btn-sm:hover { background: var(--text); color: var(--bg); }
+
+.btn-sm.approved {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  cursor: default;
+}
+
+.btn-sm.ghost { border-color: var(--border); color: var(--text3); }
+.btn-sm.ghost:hover { border-color: var(--red); color: var(--red); background: none; }
+
+/* ANALYTICS PAGE */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.analytics-metric {
+  padding: 14px 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border2);
+}
+
+.analytics-metric:last-child { border-right: none; }
+
+.am-val {
+  font-family: var(--display);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.am-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text3);
+  margin-top: 3px;
+}
+
+.am-delta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--green);
+  margin-top: 2px;
+}
+
+.am-delta.neg { color: var(--red); }
+
+.chart-block {
+  border: 1px solid var(--border2);
+  border-top: none;
+  margin-bottom: 0;
+}
+
+.chart-header {
+  padding: 8px 18px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-body { padding: 16px 18px; }
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 72px;
+}
+
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+
+.bar {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.bar:hover { background: #DDD; }
+.bar.hi { background: var(--text); border-color: var(--text); }
+
+.bar-lbl {
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; }
+.two-col > div { padding: 16px 18px; }
+.two-col > div + div { border-left: 1px solid var(--border); }
+
+.corr-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.corr-row:last-child { margin-bottom: 0; }
+
+.corr-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 55px;
+  flex-shrink: 0;
+}
+
+.corr-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.corr-fill { height: 100%; }
+.cf-high { background: var(--text); }
+.cf-mid { background: #888; }
+.cf-low { background: var(--text3); }
+
+.corr-val {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text2);
+  width: 50px;
+  text-align: right;
+}
+
+/* HISTORY PAGE */
+.history-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.filter-btn:hover { border-color: var(--border2); color: var(--text); }
+.filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+.history-table { }
+
+.history-thead {
+  display: grid;
+  grid-template-columns: 1fr 70px 90px 70px 60px 80px;
+  padding: 6px 28px;
+  background: var(--text);
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--bg);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  gap: 12px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 90px 70px 60px 80px;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.history-row:hover { background: var(--surface); }
+
+.h-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+
+.h-mono {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+}
+
+.h-score {
+  font-family: var(--display);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.hs-high { color: var(--green); }
+.hs-mid { color: #AA6600; }
+.hs-low { color: var(--red); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 16px;
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.toast.show { opacity: 1; transform: none; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border2); }
 </style>
 </head>
 <body>
 
 <div class="shell">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">
-        <div class="logo-icon">
-          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2h3v10H2zM6 7h6M9 4l3 3-3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="logo-name">
-            Content hub
-            <span>LinkedIn autopilot</span>
-          </div>
-        </div>
-      </div>
+    <div class="logo-block">
+      <div class="logo-word">Daemien</div>
+      <div class="logo-sub">Automation OS</div>
     </div>
 
     <nav class="nav">
       <div class="nav-section">
-        <div class="nav-label">Pending</div>
-        <button class="nav-item active" onclick="showScreen('ideas')">
-          <span class="nav-item-left">
-            <span class="nav-dot"></span>
-            Idea selection
-          </span>
-          <span class="badge badge-pending">1</span>
-        </button>
-        <button class="nav-item" onclick="showScreen('draft')">
-          <span class="nav-item-left">
-            <span class="nav-dot"></span>
-            Draft review
-          </span>
-          <span class="badge badge-pending">1</span>
-        </button>
-        <button class="nav-item" onclick="showScreen('rating')">
-          <span class="nav-item-left">
-            <span class="nav-dot"></span>
-            Rate a post
-          </span>
-        </button>
+        <div class="nav-section-label">Workspace</div>
+        <button class="nav-item active" onclick="nav('overview',this)">Overview</button>
       </div>
       <div class="nav-section">
-        <div class="nav-label">Archive</div>
-        <button class="nav-item" onclick="showScreen('history')">
-          <span class="nav-item-left">
-            <span class="nav-dot"></span>
-            Post history
-          </span>
+        <div class="nav-section-label">LinkedIn</div>
+        <button class="nav-item" onclick="nav('li-analytics',this)">Analytics</button>
+        <button class="nav-item" onclick="nav('li-ideas',this)">
+          Post ideas
+          <span class="nav-badge">3</span>
         </button>
+        <button class="nav-item" onclick="nav('li-history',this)">History</button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Email</div>
+        <button class="nav-item" style="opacity:0.35;cursor:not-allowed">Campaigns <span class="nav-badge">—</span></button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">X / Twitter</div>
+        <button class="nav-item" style="opacity:0.35;cursor:not-allowed">Threads <span class="nav-badge">—</span></button>
       </div>
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="run-info">
-        <strong>Last run:</strong> today, 08:00<br>
-        <strong>Next run:</strong> tomorrow, 08:00<br>
-        <strong>Posts published:</strong> 14
-      </div>
+    <div class="sidebar-ext">
+      <a href="https://github.com/your-repo" target="_blank" class="ext-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="https://app.n8n.cloud" target="_blank" class="ext-link">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="8" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><path d="M6 7l4-2M6 9l4 2"/></svg>
+        N8N
+      </a>
+      <a href="https://vercel.com/dashboard" target="_blank" class="ext-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L16 15H0L8 1z"/></svg>
+        Vercel
+      </a>
     </div>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
     <div class="topbar">
-      <div>
-        <div class="page-title" id="page-title">Choose an idea</div>
-        <div class="page-sub" id="page-sub">Run · Saturday 21 Mar 2026 · 08:00</div>
+      <div class="topbar-left">
+        <span class="topbar-page" id="page-title">Overview</span>
+        <span class="topbar-sep">/</span>
+        <span class="topbar-crumb" id="page-crumb">Workspace</span>
       </div>
-      <div class="status-pill">
+      <div class="sys-status">
         <div class="status-dot"></div>
-        Workflow active
+        Systems live
       </div>
     </div>
 
     <div class="content">
 
-      <!-- IDEAS SCREEN -->
-      <div class="screen active" id="screen-ideas">
-        <div class="ideas-grid">
+      <!-- ===== OVERVIEW ===== -->
+      <div class="screen active" id="screen-overview">
 
-          <div class="idea-card selected" onclick="selectIdea(this, 0)">
-            <div class="idea-header">
-              <div>
-                <div class="idea-num">Idea 01</div>
-                <div class="idea-title">Why most AI automation projects fail in week 3</div>
-              </div>
-              <div style="display:flex; align-items:flex-start; gap:8px; flex-shrink:0;">
-                <span class="badge badge-new">Top pick</span>
-                <div class="select-indicator">
-                  <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
-                    <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+        <!-- Graphic banner: eagle + bill motif -->
+        <div class="graphic-banner">
+          <svg width="100%" height="120" viewBox="0 0 900 120" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid lines -->
+            <line x1="0" y1="60" x2="900" y2="60" stroke="#E8E8E8" stroke-width="0.5"/>
+            <line x1="450" y1="0" x2="450" y2="120" stroke="#E8E8E8" stroke-width="0.5"/>
+
+            <!-- Left: stylised eagle silhouette -->
+            <g transform="translate(60,10)" opacity="0.07">
+              <path d="M50 80 C30 60 0 55 10 40 C20 25 40 35 50 45 C50 35 45 15 60 10 C75 5 80 25 75 40 C85 30 100 25 105 35 C110 45 90 55 80 65 C90 65 100 70 95 80 C90 90 75 85 65 80 C60 90 55 95 45 95 C35 95 38 85 50 80Z" fill="#000"/>
+              <ellipse cx="60" cy="10" rx="8" ry="10" fill="#000"/>
+              <path d="M55 18 L45 8 M65 18 L75 8" stroke="#000" stroke-width="2"/>
+            </g>
+
+            <!-- Center: WORK text  -->
+            <text x="450" y="72" font-family="'Bebas Neue',sans-serif" font-size="64" fill="#0A0A0A" opacity="0.04" text-anchor="middle" letter-spacing="20">WORK BUILDS EMPIRES</text>
+
+            <!-- Right: dollar sign motif -->
+            <g transform="translate(780,20)" opacity="0.07">
+              <text font-family="'Bebas Neue',sans-serif" font-size="80" fill="#000">$</text>
+            </g>
+
+            <!-- Bill border decorations (left) -->
+            <rect x="20" y="10" width="180" height="100" rx="0" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.08"/>
+            <rect x="24" y="14" width="172" height="92" rx="0" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.06"/>
+
+            <!-- Bill border decorations (right) -->
+            <rect x="700" y="10" width="180" height="100" rx="0" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.08"/>
+            <rect x="704" y="14" width="172" height="92" rx="0" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.06"/>
+
+            <!-- Serial number style text -->
+            <text x="30" y="25" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.12" letter-spacing="2">N4830217A</text>
+            <text x="720" y="25" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.12" letter-spacing="2">N4830217A</text>
+
+            <!-- Corner ornaments -->
+            <text x="30" y="105" font-family="'Bebas Neue',sans-serif" font-size="28" fill="#000" opacity="0.06">100</text>
+            <text x="148" y="105" font-family="'Bebas Neue',sans-serif" font-size="28" fill="#000" opacity="0.06">100</text>
+            <text x="718" y="105" font-family="'Bebas Neue',sans-serif" font-size="28" fill="#000" opacity="0.06">100</text>
+            <text x="836" y="105" font-family="'Bebas Neue',sans-serif" font-size="28" fill="#000" opacity="0.06">100</text>
+
+            <!-- Center oval seal -->
+            <ellipse cx="450" cy="60" rx="70" ry="48" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.06"/>
+            <ellipse cx="450" cy="60" rx="65" ry="43" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.04"/>
+            <text x="450" y="55" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" text-anchor="middle" letter-spacing="3">THE UNITED</text>
+            <text x="450" y="65" font-family="'Bebas Neue',sans-serif" font-size="14" fill="#000" opacity="0.1" text-anchor="middle" letter-spacing="4">DAEMIEN</text>
+            <text x="450" y="75" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" text-anchor="middle" letter-spacing="3">AUTOMATION CO.</text>
+          </svg>
+        </div>
+
+        <!-- Ticker -->
+        <div class="ticker">
+          <div class="ticker-inner">
+            <span class="ticker-item">Build in silence</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Ship every day</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Automate the grind</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Stack the reps</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Process over results</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Compound daily</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Build in silence</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Ship every day</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Automate the grind</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Stack the reps</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Process over results</span>
+            <span class="ticker-item accent">$</span>
+            <span class="ticker-item">Compound daily</span>
+            <span class="ticker-item accent">$</span>
+          </div>
+        </div>
+
+        <div class="page-body">
+          <div class="stats-row">
+            <div class="stat-block">
+              <div class="stat-val">3</div>
+              <div class="stat-label">Active flows</div>
+              <div class="stat-delta">All systems live</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-val">47</div>
+              <div class="stat-label">Posts published</div>
+              <div class="stat-delta">+5 this month</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-val green">7.2</div>
+              <div class="stat-label">Avg rating</div>
+              <div class="stat-delta">+0.8 vs last month</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-val red">3</div>
+              <div class="stat-label">Pending approval</div>
+              <div class="stat-delta" style="color:var(--red);">Action required</div>
+            </div>
+          </div>
+
+          <div class="sec-label">Projects</div>
+
+          <div class="project-table">
+            <div class="project-thead">
+              <div>Project</div>
+              <div>Status</div>
+              <div>Published</div>
+              <div>Avg score</div>
+              <div>Eng. rate</div>
+              <div></div>
+            </div>
+            <div class="project-row" onclick="nav('li-ideas', document.querySelectorAll('.nav-item')[2])">
+              <div class="project-name-cell">
+                <div>
+                  <div class="proj-name">LinkedIn autoposter</div>
+                  <div class="proj-desc">Daily generation + approval + tracking</div>
                 </div>
               </div>
+              <div><span class="pill pill-live">Live</span></div>
+              <div class="cell-num">14</div>
+              <div class="cell-num">6.8</div>
+              <div class="cell-num">4.2%</div>
+              <div class="arrow-btn">→</div>
             </div>
-            <div class="idea-meta">
-              <div class="idea-tag"><strong>Angle:</strong> contrarian + personal story</div>
-              <div class="idea-tag"><strong>Format:</strong> list + insight</div>
+            <div class="project-row">
+              <div class="project-name-cell">
+                <div>
+                  <div class="proj-name">Email newsletter</div>
+                  <div class="proj-desc">Weekly digest from RSS + sources</div>
+                </div>
+              </div>
+              <div><span class="pill pill-build">Building</span></div>
+              <div class="cell-num muted">—</div>
+              <div class="cell-num muted">—</div>
+              <div class="cell-num muted">—</div>
+              <div class="arrow-btn" style="opacity:0.3">→</div>
             </div>
-            <div class="idea-hook">"I've watched AI automation projects die the same death 6 times now…"</div>
+            <div class="project-row">
+              <div class="project-name-cell">
+                <div>
+                  <div class="proj-name">X / Twitter threads</div>
+                  <div class="proj-desc">Repurpose LinkedIn as threads</div>
+                </div>
+              </div>
+              <div><span class="pill pill-off">Planned</span></div>
+              <div class="cell-num muted">—</div>
+              <div class="cell-num muted">—</div>
+              <div class="cell-num muted">—</div>
+              <div class="arrow-btn" style="opacity:0.3">→</div>
+            </div>
           </div>
-
-          <div class="idea-card" onclick="selectIdea(this, 1)">
-            <div class="idea-header">
-              <div>
-                <div class="idea-num">Idea 02</div>
-                <div class="idea-title">The N8N node nobody talks about (but absolutely should)</div>
-              </div>
-              <div class="select-indicator">
-                <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
-                  <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-            <div class="idea-meta">
-              <div class="idea-tag"><strong>Angle:</strong> hidden gem / tutorial</div>
-              <div class="idea-tag"><strong>Format:</strong> short how-to</div>
-            </div>
-            <div class="idea-hook">"I stumbled on this by accident and it's saved me 3 hours a week…"</div>
-          </div>
-
-          <div class="idea-card" onclick="selectIdea(this, 2)">
-            <div class="idea-header">
-              <div>
-                <div class="idea-num">Idea 03</div>
-                <div class="idea-title">I automated my LinkedIn posting. Here's what I actually learned</div>
-              </div>
-              <div class="select-indicator">
-                <svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
-                  <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-            <div class="idea-meta">
-              <div class="idea-tag"><strong>Angle:</strong> meta / behind the scenes</div>
-              <div class="idea-tag"><strong>Format:</strong> narrative</div>
-            </div>
-            <div class="idea-hook">"Yes, this post was written by AI. Here's the honest truth about that…"</div>
-          </div>
-
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" onclick="approveIdea()">Generate full draft</button>
-          <button class="btn btn-secondary" onclick="regenerate()">Regenerate ideas</button>
-        </div>
-
-        <div class="success-banner" id="ideas-success">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Selection sent to N8N — full draft being generated now.
         </div>
       </div>
 
-      <!-- DRAFT SCREEN -->
-      <div class="screen" id="screen-draft">
-        <div class="draft-box">
-          <div class="draft-topbar">
-            <div class="draft-label">Draft</div>
-            <div class="word-count" id="word-count">148 words</div>
+      <!-- ===== LINKEDIN ANALYTICS ===== -->
+      <div class="screen" id="screen-li-analytics">
+
+        <div class="graphic-banner" style="height:80px;">
+          <svg width="100%" height="80" viewBox="0 0 900 80" preserveAspectRatio="xMidYMid slice">
+            <text x="450" y="55" font-family="'Bebas Neue',sans-serif" font-size="52" fill="#0A0A0A" opacity="0.04" text-anchor="middle" letter-spacing="16">LINKEDIN ANALYTICS</text>
+            <line x1="0" y1="40" x2="900" y2="40" stroke="#E8E8E8" stroke-width="0.5"/>
+            <text x="30" y="22" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">PERFORMANCE REPORT</text>
+            <text x="800" y="22" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">MAR 2026</text>
+          </svg>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="analytics-metric">
+            <div class="am-val">2,841</div>
+            <div class="am-label">Followers</div>
+            <div class="am-delta">+47 this month</div>
           </div>
-          <div class="draft-body">
-            <div class="draft-text" id="draft-content">I've watched AI automation projects die the same death 6 times.
-
-Week 1: excitement.
-Week 2: real progress.
-Week 3: everything breaks.
-
-It's never the technology. It's always the same 3 things nobody covers in the tutorial videos:
-
-1/ No human in the loop for edge cases
-The automation works perfectly — until it doesn't. And when it fails with no oversight, it fails loudly.
-
-2/ The prompt worked in testing, not production
-Real data is messier than your test data. Always.
-
-3/ Nobody owns the maintenance
-"Set and forget" is a myth. Automations need tending.
-
-The fix is simpler than you think:
-
-Build in a weekly 15-min review. Keep a human approval step for anything customer-facing. Document your edge cases as you find them.
-
-Automation isn't a destination. It's a practice.</div>
+          <div class="analytics-metric">
+            <div class="am-val">18.4k</div>
+            <div class="am-label">Impressions (30d)</div>
+            <div class="am-delta">+22% vs prior month</div>
+          </div>
+          <div class="analytics-metric">
+            <div class="am-val">4.2%</div>
+            <div class="am-label">Avg engagement rate</div>
+            <div class="am-delta">+0.8pp vs prior month</div>
+          </div>
+          <div class="analytics-metric">
+            <div class="am-val">14</div>
+            <div class="am-label">Posts this month</div>
+            <div class="am-delta">On schedule</div>
           </div>
         </div>
 
-        <div class="notes-area">
-          <div class="field-label">Your notes</div>
-          <textarea id="draft-notes" rows="3" placeholder="Make it punchier. Add a CTA. Remove point 2. Change the tone…"></textarea>
+        <div class="chart-block">
+          <div class="chart-header">
+            <span>Impressions per post — last 14 posts</span>
+            <span style="color:var(--text);">Peak: 1,204</span>
+          </div>
+          <div class="chart-body">
+            <div class="bars" id="imp-chart"></div>
+          </div>
         </div>
 
-        <div class="actions">
-          <button class="btn btn-primary" onclick="approveDraft()">Approve &amp; schedule</button>
-          <button class="btn btn-secondary" onclick="requestRewrite()">Rewrite with notes</button>
-          <button class="btn btn-danger" onclick="rejectDraft()">Discard</button>
-        </div>
-
-        <div class="success-banner" id="draft-success">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Post approved — scheduled for today at 12:00.
-        </div>
-      </div>
-
-      <!-- RATING SCREEN -->
-      <div class="screen" id="screen-rating">
-        <div class="post-recap">
-          <div class="post-recap-header">
+        <div class="chart-block" style="border-top:none;">
+          <div class="two-col">
             <div>
-              <div class="idea-num">Posted · Mon 18 Mar</div>
-              <div class="post-recap-title">Why most AI automation projects fail in week 3</div>
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:var(--text3);margin-bottom:12px;">Engagement rate per post</div>
+              <div class="bars" id="eng-chart"></div>
             </div>
-            <span class="badge badge-done">Published</span>
-          </div>
-          <div class="stats-row">
-            <div class="stat">
-              <div class="stat-val">847</div>
-              <div class="stat-label">Impressions</div>
+            <div>
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:var(--text3);margin-bottom:12px;">Rating vs impressions</div>
+              <div class="corr-row">
+                <div class="corr-label">Score 8–10</div>
+                <div class="corr-track"><div class="corr-fill cf-high" style="width:85%;"></div></div>
+                <div class="corr-val">1.2k avg</div>
+              </div>
+              <div class="corr-row">
+                <div class="corr-label">Score 5–7</div>
+                <div class="corr-track"><div class="corr-fill cf-mid" style="width:52%;"></div></div>
+                <div class="corr-val">680 avg</div>
+              </div>
+              <div class="corr-row">
+                <div class="corr-label">Score 0–4</div>
+                <div class="corr-track"><div class="corr-fill cf-low" style="width:24%;"></div></div>
+                <div class="corr-val">290 avg</div>
+              </div>
             </div>
-            <div class="stat">
-              <div class="stat-val">34</div>
-              <div class="stat-label">Likes</div>
-            </div>
-            <div class="stat">
-              <div class="stat-val">12</div>
-              <div class="stat-label">Comments</div>
-            </div>
-            <div class="stat">
-              <div class="stat-val">4.0%</div>
-              <div class="stat-label">Eng. rate</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rating-section">
-          <div class="rating-label-row">
-            <div class="rating-title">Your rating</div>
-            <div class="rating-score" id="rating-display">7 <span>/ 10</span></div>
-          </div>
-          <div class="rating-descriptor" id="rating-descriptor">Good — worth repeating this format</div>
-          <div class="slider-row">
-            <span class="slider-bound">0</span>
-            <input type="range" id="rating-slider" min="0" max="10" step="1" value="7" oninput="updateRating(this.value)">
-            <span class="slider-bound">10</span>
           </div>
         </div>
 
-        <div class="notes-area">
-          <div class="field-label">What worked / what didn't</div>
-          <textarea id="rating-notes" rows="3" placeholder="The hook was strong. List format worked well. Could use a stronger CTA at the end…"></textarea>
+      </div>
+
+      <!-- ===== POST IDEAS ===== -->
+      <div class="screen" id="screen-li-ideas">
+
+        <div class="graphic-banner" style="height:64px;">
+          <svg width="100%" height="64" viewBox="0 0 900 64" preserveAspectRatio="xMidYMid slice">
+            <text x="450" y="46" font-family="'Bebas Neue',sans-serif" font-size="44" fill="#0A0A0A" opacity="0.04" text-anchor="middle" letter-spacing="16">IDEAS FOR TODAY</text>
+            <text x="30" y="20" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">SAT 21 MAR 2026 · RUN 08:00</text>
+          </svg>
         </div>
 
-        <div class="actions">
-          <button class="btn btn-primary" onclick="saveRating()">Save feedback</button>
+        <div class="ideas-topbar">
+          <span class="run-tag">Run <strong>SAT 21 MAR</strong> · 3 ideas pending</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn">Regenerate</button>
+            <button class="btn btn-primary-solid">Approve all →</button>
+          </div>
         </div>
 
-        <div class="success-banner" id="rating-success">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Feedback saved to Google Sheets — next run will learn from this.
+        <div class="idea-rows">
+
+          <div class="idea-row">
+            <div class="idea-num-cell">1</div>
+            <div class="idea-content">
+              <div class="idea-title">Why most AI automation projects fail in week 3</div>
+              <div class="idea-meta">
+                <span class="tag">Contrarian</span>
+                <span class="tag">Personal story</span>
+                <span class="tag">List format</span>
+              </div>
+              <div class="idea-hook">"I've watched AI automation projects die the same death 6 times now…"</div>
+            </div>
+            <div class="idea-actions">
+              <div class="stars-row">
+                <span class="stars-label">Rate</span>
+                <div class="stars" data-card="0">
+                  <span class="star" onclick="rateStar(0,1)">★</span>
+                  <span class="star" onclick="rateStar(0,2)">★</span>
+                  <span class="star" onclick="rateStar(0,3)">★</span>
+                  <span class="star" onclick="rateStar(0,4)">★</span>
+                  <span class="star" onclick="rateStar(0,5)">★</span>
+                </div>
+                <span class="rval" id="rval-0">—</span>
+              </div>
+              <div class="action-btns">
+                <button class="btn-sm ghost" onclick="discard(this)">Discard</button>
+                <button class="btn-sm" id="abtn-0" onclick="approveIdea(0,this)">Approve →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="idea-row">
+            <div class="idea-num-cell">2</div>
+            <div class="idea-content">
+              <div class="idea-title">The N8N node nobody talks about (but absolutely should)</div>
+              <div class="idea-meta">
+                <span class="tag">Tutorial</span>
+                <span class="tag">Hidden gem</span>
+                <span class="tag">How-to</span>
+              </div>
+              <div class="idea-hook">"I stumbled on this by accident and it saved me 3 hours a week…"</div>
+            </div>
+            <div class="idea-actions">
+              <div class="stars-row">
+                <span class="stars-label">Rate</span>
+                <div class="stars" data-card="1">
+                  <span class="star" onclick="rateStar(1,1)">★</span>
+                  <span class="star" onclick="rateStar(1,2)">★</span>
+                  <span class="star" onclick="rateStar(1,3)">★</span>
+                  <span class="star" onclick="rateStar(1,4)">★</span>
+                  <span class="star" onclick="rateStar(1,5)">★</span>
+                </div>
+                <span class="rval" id="rval-1">—</span>
+              </div>
+              <div class="action-btns">
+                <button class="btn-sm ghost" onclick="discard(this)">Discard</button>
+                <button class="btn-sm" id="abtn-1" onclick="approveIdea(1,this)">Approve →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="idea-row">
+            <div class="idea-num-cell">3</div>
+            <div class="idea-content">
+              <div class="idea-title">I automated my LinkedIn posting. Here's what I actually learned</div>
+              <div class="idea-meta">
+                <span class="tag">Meta</span>
+                <span class="tag">Behind the scenes</span>
+                <span class="tag">Narrative</span>
+              </div>
+              <div class="idea-hook">"Yes, this post was written by AI. Here's the honest truth about that…"</div>
+            </div>
+            <div class="idea-actions">
+              <div class="stars-row">
+                <span class="stars-label">Rate</span>
+                <div class="stars" data-card="2">
+                  <span class="star" onclick="rateStar(2,1)">★</span>
+                  <span class="star" onclick="rateStar(2,2)">★</span>
+                  <span class="star" onclick="rateStar(2,3)">★</span>
+                  <span class="star" onclick="rateStar(2,4)">★</span>
+                  <span class="star" onclick="rateStar(2,5)">★</span>
+                </div>
+                <span class="rval" id="rval-2">—</span>
+              </div>
+              <div class="action-btns">
+                <button class="btn-sm ghost" onclick="discard(this)">Discard</button>
+                <button class="btn-sm" id="abtn-2" onclick="approveIdea(2,this)">Approve →</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- HISTORY SCREEN -->
-      <div class="screen" id="screen-history">
-        <div style="margin-bottom: 20px;">
-          <div class="field-label" style="margin-bottom:4px;">14 posts · avg rating 6.8</div>
+      <!-- ===== HISTORY ===== -->
+      <div class="screen" id="screen-li-history">
+
+        <div class="graphic-banner" style="height:64px;">
+          <svg width="100%" height="64" viewBox="0 0 900 64" preserveAspectRatio="xMidYMid slice">
+            <text x="450" y="46" font-family="'Bebas Neue',sans-serif" font-size="44" fill="#0A0A0A" opacity="0.04" text-anchor="middle" letter-spacing="16">POST HISTORY</text>
+            <text x="30" y="20" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">14 POSTS PUBLISHED · AVG SCORE 6.8</text>
+          </svg>
         </div>
 
-        <div class="history-row">
-          <div class="history-score high">9</div>
-          <div class="history-info">
-            <div class="history-title">Why most AI automation projects fail in week 3</div>
-            <div class="history-meta">18 Mar · 847 impressions · 34 likes</div>
-          </div>
-          <div class="history-bar"><div class="history-fill" style="width:90%"></div></div>
+        <div class="history-bar">
+          <button class="filter-btn active" onclick="filterH('all',this)">All</button>
+          <button class="filter-btn" onclick="filterH('high',this)">Score 8+</button>
+          <button class="filter-btn" onclick="filterH('mid',this)">Score 5–7</button>
+          <button class="filter-btn" onclick="filterH('low',this)">Score &lt;5</button>
         </div>
 
-        <div class="history-row">
-          <div class="history-score high">8</div>
-          <div class="history-info">
-            <div class="history-title">3 things I wish I knew before building my first N8N workflow</div>
-            <div class="history-meta">14 Mar · 1.2k impressions · 51 likes</div>
+        <div class="history-table">
+          <div class="history-thead">
+            <div>Title</div>
+            <div>Date</div>
+            <div>Impressions</div>
+            <div>Likes</div>
+            <div>Score</div>
+            <div>Status</div>
           </div>
-          <div class="history-bar"><div class="history-fill" style="width:80%"></div></div>
-        </div>
-
-        <div class="history-row">
-          <div class="history-score mid">6</div>
-          <div class="history-info">
-            <div class="history-title">The future of no-code automation</div>
-            <div class="history-meta">10 Mar · 320 impressions · 12 likes</div>
+          <div id="history-body">
+            <div class="history-row" data-score="9"><div class="h-title">Why most AI automation projects fail in week 3</div><div class="h-mono">18 Mar</div><div class="h-mono">847</div><div class="h-mono">34</div><div class="h-score hs-high">9</div><div><span class="pill pill-live">Published</span></div></div>
+            <div class="history-row" data-score="8"><div class="h-title">3 things I wish I knew before building my first N8N workflow</div><div class="h-mono">14 Mar</div><div class="h-mono">1,204</div><div class="h-mono">51</div><div class="h-score hs-high">8</div><div><span class="pill pill-live">Published</span></div></div>
+            <div class="history-row" data-score="7"><div class="h-title">How I use Claude to do research in half the time</div><div class="h-mono">10 Mar</div><div class="h-mono">612</div><div class="h-mono">22</div><div class="h-score hs-mid">7</div><div><span class="pill pill-live">Published</span></div></div>
+            <div class="history-row" data-score="6"><div class="h-title">The future of no-code automation</div><div class="h-mono">6 Mar</div><div class="h-mono">320</div><div class="h-mono">12</div><div class="h-score hs-mid">6</div><div><span class="pill pill-live">Published</span></div></div>
+            <div class="history-row" data-score="5"><div class="h-title">Tools I use every day as a solo founder</div><div class="h-mono">2 Mar</div><div class="h-mono">290</div><div class="h-mono">9</div><div class="h-score hs-mid">5</div><div><span class="pill pill-live">Published</span></div></div>
+            <div class="history-row" data-score="3"><div class="h-title">Thoughts on AI in 2026</div><div class="h-mono">26 Feb</div><div class="h-mono">178</div><div class="h-mono">4</div><div class="h-score hs-low">3</div><div><span class="pill pill-live">Published</span></div></div>
           </div>
-          <div class="history-bar"><div class="history-fill" style="width:60%; background: #EF9F27;"></div></div>
-        </div>
-
-        <div class="history-row">
-          <div class="history-score mid">5</div>
-          <div class="history-info">
-            <div class="history-title">Tools I use every day as a solo founder</div>
-            <div class="history-meta">6 Mar · 290 impressions · 9 likes</div>
-          </div>
-          <div class="history-bar"><div class="history-fill" style="width:50%; background: #EF9F27;"></div></div>
-        </div>
-
-        <div class="history-row">
-          <div class="history-score low">3</div>
-          <div class="history-info">
-            <div class="history-title">Thoughts on AI in 2026</div>
-            <div class="history-meta">2 Mar · 178 impressions · 4 likes</div>
-          </div>
-          <div class="history-bar"><div class="history-fill" style="width:30%; background: #E24B4A;"></div></div>
         </div>
       </div>
 
@@ -997,113 +1273,91 @@ Automation isn't a destination. It's a practice.</div>
   </main>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  const WEBHOOK_BASE = 'YOUR_N8N_WEBHOOK_URL';
+const WEBHOOK = 'YOUR_N8N_WEBHOOK_URL';
+const ratings = {};
 
-  const pageMeta = {
-    ideas:   { title: 'Choose an idea',    sub: 'Run · Saturday 21 Mar 2026 · 08:00' },
-    draft:   { title: 'Review your draft', sub: 'Generated from idea 01 · 148 words' },
-    rating:  { title: 'Rate this post',    sub: 'Posted Mon 18 Mar · 3 days ago' },
-    history: { title: 'Post history',      sub: '14 posts · all time' },
-  };
+const pages = {
+  'overview':      { title: 'Overview',    crumb: 'Workspace' },
+  'li-analytics':  { title: 'Analytics',   crumb: 'LinkedIn' },
+  'li-ideas':      { title: 'Post ideas',  crumb: 'LinkedIn' },
+  'li-history':    { title: 'History',     crumb: 'LinkedIn' },
+};
 
-  let selectedIdea = 0;
-
-  function showScreen(name) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('screen-' + name).classList.add('active');
-    const m = pageMeta[name];
-    document.getElementById('page-title').textContent = m.title;
-    document.getElementById('page-sub').textContent = m.sub;
-    const navMap = { ideas: 0, draft: 1, rating: 2, history: 3 };
-    document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
+function nav(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const p = pages[id];
+  if (p) {
+    document.getElementById('page-title').textContent = p.title;
+    document.getElementById('page-crumb').textContent = p.crumb;
   }
+}
 
-  function selectIdea(card, idx) {
-    document.querySelectorAll('.idea-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedIdea = idx;
-  }
+function rateStar(card, val) {
+  ratings[card] = val;
+  document.querySelectorAll(`.stars[data-card="${card}"] .star`).forEach((s,i) => s.classList.toggle('lit', i < val));
+  document.getElementById('rval-' + card).textContent = val + '/5';
+}
 
-  function approveIdea() {
-    const titles = [
-      'Why most AI automation projects fail in week 3',
-      'The N8N node nobody talks about (but absolutely should)',
-      'I automated my LinkedIn posting. Here\'s what I actually learned'
-    ];
-    callWebhook('idea_selected', { idea_index: selectedIdea, idea_title: titles[selectedIdea] });
-    document.getElementById('ideas-success').classList.add('show');
-  }
+function approveIdea(idx, btn) {
+  btn.textContent = 'Approved ✓';
+  btn.classList.add('approved');
+  btn.disabled = true;
+  callWebhook({ event: 'idea_approved', idea_index: idx, rating: ratings[idx] || 0 });
+  toast('Idea approved — generating draft');
+}
 
-  function regenerate() {
-    callWebhook('regenerate_ideas', {});
-    alert('Regenerating ideas — refresh in ~30 seconds.');
-  }
+function discard(btn) {
+  btn.closest('.idea-row').style.opacity = '0.3';
+  btn.closest('.idea-row').style.pointerEvents = 'none';
+  toast('Idea discarded');
+}
 
-  function approveDraft() {
-    const notes = document.getElementById('draft-notes').value;
-    callWebhook('draft_approved', { notes });
-    document.getElementById('draft-success').classList.add('show');
-  }
+function filterH(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.history-row').forEach(r => {
+    const s = parseInt(r.dataset.score);
+    r.style.display = (type==='high'&&s<8)||(type==='mid'&&(s<5||s>=8))||(type==='low'&&s>=5) ? 'none' : '';
+  });
+}
 
-  function requestRewrite() {
-    const notes = document.getElementById('draft-notes').value;
-    callWebhook('rewrite_requested', { notes });
-    alert('Rewrite requested — refresh in ~30 seconds.');
-  }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
 
-  function rejectDraft() {
-    if (confirm('Discard this draft?')) {
-      callWebhook('draft_rejected', {});
-    }
-  }
+async function callWebhook(data) {
+  try {
+    await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...data, ts: new Date().toISOString()}) });
+  } catch(e) { console.warn('webhook:', e.message); }
+}
 
-  const descriptors = [
-    'Skip — not worth publishing',
-    'Below expectations',
-    'Weak — needs major rework',
-    'Mediocre — some things worked',
-    'Okay — but forgettable',
-    'Decent — close to the mark',
-    'Good — worth repeating this format',
-    'Strong — one of the better posts',
-    'Really strong — use as template',
-    'Excellent — near perfect',
-    'Perfect — use as gold standard example'
-  ];
+function buildBars(id, data) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const max = Math.max(...data.map(d => d.v));
+  el.innerHTML = data.map(d => `<div class="bar-col"><div class="bar${d.hi?' hi':''}" style="height:${Math.round((d.v/max)*64)+6}px" title="${d.v}"></div><div class="bar-lbl">${d.l}</div></div>`).join('');
+}
 
-  function updateRating(v) {
-    document.getElementById('rating-display').innerHTML = v + ' <span>/ 10</span>';
-    document.getElementById('rating-descriptor').textContent = descriptors[parseInt(v)];
-  }
+buildBars('imp-chart', [
+  {v:290,l:'F26'},{v:178,l:'F28'},{v:320,l:'M2'},{v:410,l:'M4'},{v:290,l:'M6'},
+  {v:380,l:'M8'},{v:612,l:'M10'},{v:520,l:'M12'},{v:490,l:'M14'},
+  {v:847,l:'M18',hi:true},{v:720,l:'M19'},{v:610,l:'M20'},{v:1204,l:'M21',hi:true},{v:890,l:'M22'}
+]);
 
-  function saveRating() {
-    const score = document.getElementById('rating-slider').value;
-    const notes = document.getElementById('rating-notes').value;
-    callWebhook('post_rated', { score: parseInt(score), notes, post_title: 'Why most AI automation projects fail in week 3' });
-    document.getElementById('rating-success').classList.add('show');
-  }
-
-  async function callWebhook(event, data) {
-    const payload = { event, timestamp: new Date().toISOString(), ...data };
-    console.log('Sending to N8N:', payload);
-    try {
-      await fetch(WEBHOOK_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (e) {
-      console.warn('Webhook call failed (expected in demo):', e.message);
-    }
-  }
-
-  const params = new URLSearchParams(window.location.search);
-  const view = params.get('view');
-  if (view && ['ideas', 'draft', 'rating', 'history'].includes(view)) {
-    showScreen(view);
-  }
+buildBars('eng-chart', [
+  {v:2.1,l:'F26'},{v:1.8,l:'F28'},{v:2.4,l:'M2'},{v:3.1,l:'M4'},{v:2.8,l:'M6'},
+  {v:3.4,l:'M8'},{v:4.1,l:'M10'},{v:3.8,l:'M12'},{v:3.6,l:'M14'},
+  {v:5.2,l:'M18',hi:true},{v:4.8,l:'M19'},{v:4.1,l:'M20'},{v:6.1,l:'M21',hi:true},{v:5.3,l:'M22'}
+]);
 </script>
 </body>
 </html>
