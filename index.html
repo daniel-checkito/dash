@@ -465,38 +465,66 @@ button { font-family: var(--body); cursor: pointer; }
         <div class="run-hero">
           <div class="run-hero-left">
             <h2>Write Post</h2>
-            <p>Type your thought → AI writes the post</p>
+            <p>LinkedIn Autoposter · Choose your mode</p>
           </div>
           <div class="run-btns">
             <button class="btn" onclick="resetWorkflow()">Reset</button>
           </div>
         </div>
+
         <div class="workflow-states" id="wf-states">
+
+          <!-- MODE SELECT -->
           <div class="state-idle vis" id="state-idle">
-            <div style="max-width:600px;padding:0;">
-              <div style="margin-bottom:10px;">
-                <label style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);display:block;margin-bottom:8px;">Your thought for today</label>
-                <textarea id="manual-idea" style="width:100%;font-family:var(--body);font-size:14px;line-height:1.6;color:var(--ink);background:var(--surf);border:1px solid var(--line2);padding:16px;outline:none;resize:none;height:140px;transition:border-color .15s;" placeholder="Write your raw thought here — what happened today, what you tried, what surprised you, what you learned. Don't polish it. The AI does that." onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--line2)'"></textarea>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;">
-                <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);" id="thought-chars">0 / 500 chars</span>
-                <button class="btn btn-primary" id="run-btn" onclick="startWorkflow()">▶ Generate post</button>
-              </div>
-              <div style="margin-top:20px;padding:14px 16px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--ink);">
-                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:6px;">Examples of good raw thoughts</div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.8;">
-                  "Heute Cursor zum ersten Mal bei der Arbeit benutzt. Hat mir 1 Stunde gespart aber ich musste den Code 3x erklären lassen."<br>
-                  "War beim Berlin AI Meetup. 200 Leute. Alle reden über Agents aber niemand hat was live."<br>
-                  "Etsy hat mir heute eine Email geschickt — Top 1% global. Ich dachte das sei normal bis mein Kollege meinte es sei nicht normal."
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line2);margin-bottom:24px;background:var(--surf);">
+
+              <!-- OPTION A: Manual -->
+              <div style="padding:28px 24px;border-right:1px solid var(--line2);">
+                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink3);margin-bottom:10px;">Option A</div>
+                <div style="font-family:var(--disp);font-size:28px;letter-spacing:.04em;margin-bottom:6px;">Your thought</div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.6;margin-bottom:20px;">You write the raw idea — Claude turns it into a post in your voice. Best when something actually happened today.</div>
+                <textarea id="manual-idea" style="width:100%;font-family:var(--body);font-size:13px;line-height:1.6;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:12px 14px;outline:none;resize:none;height:120px;transition:border-color .15s;margin-bottom:10px;" placeholder="Write your raw thought here — what happened, what you tried, what surprised you. Don't polish it." onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--line)'"></textarea>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-family:var(--mono);font-size:8px;color:var(--ink3);" id="thought-chars">0 chars</span>
+                  <button class="btn btn-primary" onclick="startManual()">▶ Write from thought</button>
                 </div>
+              </div>
+
+              <!-- OPTION B: Auto -->
+              <div style="padding:28px 24px;display:flex;flex-direction:column;">
+                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink3);margin-bottom:10px;">Option B</div>
+                <div style="font-family:var(--disp);font-size:28px;letter-spacing:.04em;margin-bottom:6px;">Random idea</div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.6;margin-bottom:20px;">The workflow picks the best idea from your idea bank, Luma Berlin, and Indie Hackers — then writes the post. Best when you have nothing specific in mind.</div>
+                <div style="flex:1;padding:12px 14px;background:var(--bg);border:1px solid var(--line);font-family:var(--mono);font-size:9px;color:var(--ink3);line-height:1.8;margin-bottom:10px;">
+                  Checks your idea bank first<br>
+                  → Pulls Berlin events from Luma<br>
+                  → Scans Indie Hackers for stories<br>
+                  → Picks the best angle for today
+                </div>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button class="btn" onclick="startAuto()">▶ Generate random idea</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- EXAMPLES -->
+            <div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--ink3);">
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:8px;">Examples of good raw thoughts for Option A</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.9;">
+                "Heute Cursor zum ersten Mal bei der Arbeit benutzt. Hat mir 1 Stunde gespart aber ich musste den Code 3x erklären lassen."<br>
+                "War beim Berlin AI Meetup. 200 Leute. Alle reden über Agents aber niemand hat was live."<br>
+                "Etsy hat mir heute eine Email geschickt — Top 1% global. Ich dachte das sei normal bis mein Kollege meinte es sei nicht normal."
               </div>
             </div>
           </div>
+
+          <!-- RUNNING STATE -->
           <div class="state-running" id="state-running">
             <div class="running-card">
-              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);">Generating your post</div>
-              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;">Writing…</div>
-              <div class="progress-steps">
+              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);" id="running-mode-label">Generating your post</div>
+              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;" id="running-title">Writing…</div>
+              <div class="progress-steps" id="progress-steps-manual">
                 <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Sending your thought to Claude</div>
                 <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Applying your voice and format</div>
                 <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Writing the post</div>
@@ -504,6 +532,8 @@ button { font-family: var(--body); cursor: pointer; }
               </div>
             </div>
           </div>
+
+          <!-- IDEA REVIEW (auto mode only) -->
           <div class="state-idea" id="state-idea">
             <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);margin-bottom:12px;">Idea ready · approve or reject</div>
             <div class="idea-card">
@@ -519,17 +549,6 @@ button { font-family: var(--body); cursor: pointer; }
                 <div class="idea-source" id="idea-source"></div>
               </div>
               <div class="idea-card-foot">
-                <div class="stars-row">
-                  <span class="stars-lbl">Rate idea</span>
-                  <div class="stars" id="idea-stars">
-                    <span class="star" onclick="rateStar(1)">★</span>
-                    <span class="star" onclick="rateStar(2)">★</span>
-                    <span class="star" onclick="rateStar(3)">★</span>
-                    <span class="star" onclick="rateStar(4)">★</span>
-                    <span class="star" onclick="rateStar(5)">★</span>
-                  </div>
-                  <span class="rating-txt" id="rating-txt">—</span>
-                </div>
                 <div class="idea-actions">
                   <button class="btn-sm danger" onclick="rejectIdea()">✕ Reject</button>
                   <button class="btn-sm" id="approve-btn" onclick="approveIdea()">Generate post →</button>
@@ -537,6 +556,8 @@ button { font-family: var(--body); cursor: pointer; }
               </div>
             </div>
           </div>
+
+          <!-- DRAFT READY -->
           <div class="state-draft" id="state-draft">
             <div class="idle-card">
               <div class="idle-icon" style="color:var(--green);opacity:1;">✓</div>
@@ -545,10 +566,11 @@ button { font-family: var(--body); cursor: pointer; }
               <button class="btn btn-green" onclick="openDraft()">View draft →</button>
             </div>
           </div>
+
         </div>
       </div>
 
-      <!-- ANALYTICS -->
+            <!-- ANALYTICS -->
       <div class="screen" id="screen-li-analytics">
         <div class="page-hero">
           <div><div class="page-hero-title">LinkedIn Analytics</div><div class="page-hero-sub">Performance report · from post history</div></div>
@@ -680,7 +702,8 @@ button { font-family: var(--body); cursor: pointer; }
 <script>
 // ── CONFIG ──
 let CFG = {
-  triggerUrl: 'https://meshminds.app.n8n.cloud/webhook-test/linkedin-trigger',
+  triggerUrl: 'https://meshminds.app.n8n.cloud/webhook/autom-trigger',
+  manualUrl: 'https://meshminds.app.n8n.cloud/webhook/manual-trigger',
   approveUrl: '',
   rejectUrl: '',
   ideasSheetUrl: '',
@@ -912,57 +935,92 @@ function showState(s) {
 function resetWorkflow() {
   currentRating = 0; currentIdea = null; currentDraft = null;
   showState('idle');
-  const btn = document.getElementById('run-btn');
-  if (btn) { btn.disabled = false; btn.textContent = '▶ Generate post'; }
-  document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+  document.getElementById('manual-idea').value = '';
+  document.getElementById('thought-chars').textContent = '0 chars';
+  const approveBtn = document.getElementById('approve-btn');
+  if (approveBtn) { approveBtn.textContent = 'Generate post →'; approveBtn.disabled = false; }
   for (let i=0;i<4;i++) {
     const el = document.getElementById('pstep-'+i);
     if (el) { el.classList.remove('done','active'); if (i===0) el.classList.add('active'); }
   }
 }
 
-// char counter
-setTimeout(() => {
+// char counter for manual textarea
+document.addEventListener('DOMContentLoaded', () => {
   const ta = document.getElementById('manual-idea');
   if (ta) ta.addEventListener('input', () => {
-    const el = document.getElementById('thought-chars');
-    if (el) el.textContent = ta.value.length + ' / 500 chars';
+    document.getElementById('thought-chars').textContent = ta.value.length + ' chars';
   });
-}, 100);
+});
 
-async function startWorkflow() {
+async function startManual() {
   const thought = document.getElementById('manual-idea').value.trim();
   if (!thought) { toast('Write your thought first'); return; }
-  const btn = document.getElementById('run-btn');
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
+  document.getElementById('running-mode-label').textContent = 'Writing from your thought';
+  document.getElementById('running-title').textContent = 'Writing…';
   showState('running');
+  // animate steps
   for (let i = 0; i < 4; i++) {
     await delay(700);
-    document.getElementById('pstep-'+i).classList.add('done');
-    document.getElementById('pstep-'+i).classList.remove('active');
-    if (i+1 < 4) document.getElementById('pstep-'+(i+1)).classList.add('active');
+    const el = document.getElementById('pstep-'+i);
+    if (el) { el.classList.add('done'); el.classList.remove('active'); }
+    const next = document.getElementById('pstep-'+(i+1));
+    if (next) next.classList.add('active');
   }
   try {
-    const res = await fetch(CFG.triggerUrl, {
+    const res = await fetch('https://meshminds.app.n8n.cloud/webhook/manual-trigger', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ manual_idea: thought })
     });
     if (!res.ok) throw new Error('n8n returned ' + res.status);
     const data = await res.json();
-    currentDraft = data.post_text || data.text || data.output || null;
-    if (!currentDraft) throw new Error('No post text in response — check n8n output field name');
-    currentIdea = { title: thought.substring(0, 60) };
+    currentDraft = data.post_text || data.text || data.output || JSON.stringify(data);
+    document.getElementById('pending-badge').style.display = 'none';
     showState('draft');
     toast('Post generated ✓');
+    markPostingTimer();
   } catch(e) {
     showState('idle');
-    btn.disabled = false;
-    btn.textContent = '▶ Generate post';
     toast('Error: ' + e.message);
   }
 }
+
+async function startAuto() {
+  document.getElementById('running-mode-label').textContent = 'Finding the best idea for today';
+  document.getElementById('running-title').textContent = 'Researching…';
+  showState('running');
+  for (let i = 0; i < 4; i++) {
+    await delay(900);
+    const el = document.getElementById('pstep-'+i);
+    if (el) { el.classList.add('done'); el.classList.remove('active'); }
+    const next = document.getElementById('pstep-'+(i+1));
+    if (next) next.classList.add('active');
+  }
+  try {
+    const res = await fetch('https://meshminds.app.n8n.cloud/webhook/autom-trigger');
+    if (!res.ok) throw new Error('n8n returned ' + res.status);
+    const data = await res.json();
+    if (data && data.title) {
+      currentIdea = data;
+      populateIdea(data);
+      showState('idea');
+      document.getElementById('pending-badge').style.display = '';
+    } else if (data && (data.post_text || data.text || data.output)) {
+      currentDraft = data.post_text || data.text || data.output;
+      showState('draft');
+      toast('Post generated ✓');
+    } else {
+      throw new Error('Workflow returned no idea — check n8n logs');
+    }
+  } catch(e) {
+    showState('idle');
+    toast('Error: ' + e.message);
+  }
+}
+
+// keep startWorkflow as alias for auto for any legacy calls
+async function startWorkflow() { startAuto(); }
 
 function populateIdea(idea) {
   document.getElementById('idea-title').textContent = idea.title || '';
