@@ -532,8 +532,8 @@ button { font-family: var(--body); cursor: pointer; }
               <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);" id="running-mode-label">Generating your post</div>
               <div style="font-family:var(--disp);font-size:26px;margin-top:4px;" id="running-title">Writing…</div>
               <div class="progress-steps" id="progress-steps-manual">
-                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Sending your thought to Claude</div>
-                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Applying your voice and format</div>
+                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Saving idea to sheet</div>
+                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Research agent picks it up</div>
                 <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Writing the post</div>
                 <div class="pstep" id="pstep-3"><div class="pstep-dot"></div>Draft ready</div>
               </div>
@@ -963,14 +963,49 @@ document.addEventListener('DOMContentLoaded', () => {
 async function startManual() {
   const thought = document.getElementById('manual-idea').value.trim();
   if (!thought) { toast('Write your thought first'); return; }
-
-  // Show the webhook URL to paste — CORS workaround until hosted on Vercel
-  const payload = JSON.stringify({ manual_idea: thought });
-  const curlCmd = `curl -X POST https://meshminds.app.n8n.cloud/webhook/manual-trigger -H "Content-Type: application/json" -d '${payload}'`;
-
-  document.getElementById('manual-curl-box').style.display = 'block';
-  document.getElementById('manual-curl-cmd').textContent = curlCmd;
-  toast('Copy the curl command and run it in Terminal');
+  document.getElementById('running-mode-label').textContent = 'Saving idea and generating post';
+  document.getElementById('running-title').textContent = 'Writing…';
+  showState('running');
+  for (let i = 0; i < 4; i++) {
+    await delay(800);
+    const el = document.getElementById('pstep-'+i);
+    if (el) { el.classList.add('done'); el.classList.remove('active'); }
+    const next = document.getElementById('pstep-'+(i+1));
+    if (next) next.classList.add('active');
+  }
+  try {
+    const res = await fetch('https://meshminds.app.n8n.cloud/webhook/manual-trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        manual_idea: thought,
+        category: 'other',
+        added_on: new Date().toISOString().split('T')[0]
+      })
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`n8n returned ${res.status}${errText ? ': ' + errText.substring(0,100) : ''}`);
+    }
+    const data = await res.json();
+    if (data && data.title) {
+      currentIdea = data;
+      populateIdea(data);
+      showState('idea');
+    } else {
+      currentDraft = data.post_text || data.text || data.output || JSON.stringify(data);
+      showState('draft');
+      toast('Post generated ✓');
+      markPostingTimer();
+    }
+  } catch(e) {
+    showState('idle');
+    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+      toast('CORS error — deploy dashboard to Vercel to fix');
+    } else {
+      toast('Error: ' + e.message);
+    }
+  }
 }
 
 async function startAuto() {
