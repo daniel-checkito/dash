@@ -959,7 +959,6 @@ async function startManual() {
   document.getElementById('running-mode-label').textContent = 'Writing from your thought';
   document.getElementById('running-title').textContent = 'Writing…';
   showState('running');
-  // animate steps
   for (let i = 0; i < 4; i++) {
     await delay(700);
     const el = document.getElementById('pstep-'+i);
@@ -970,10 +969,16 @@ async function startManual() {
   try {
     const res = await fetch('https://meshminds.app.n8n.cloud/webhook/manual-trigger', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify({ manual_idea: thought })
     });
-    if (!res.ok) throw new Error('n8n returned ' + res.status);
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`n8n returned ${res.status}${errText ? ': ' + errText.substring(0,100) : ''}`);
+    }
     const data = await res.json();
     currentDraft = data.post_text || data.text || data.output || JSON.stringify(data);
     document.getElementById('pending-badge').style.display = 'none';
@@ -982,7 +987,12 @@ async function startManual() {
     markPostingTimer();
   } catch(e) {
     showState('idle');
-    toast('Error: ' + e.message);
+    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+      toast('CORS error — enable CORS in your n8n Webhook node settings');
+    } else {
+      toast('Error: ' + e.message);
+    }
+    console.error('Manual webhook error:', e);
   }
 }
 
