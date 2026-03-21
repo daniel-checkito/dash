@@ -3,466 +3,656 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daemien</title>
+<title>Daemien — Automation OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #FFFFFF;
-  --text: #0A0A0A;
-  --text2: #555555;
-  --text3: #AAAAAA;
-  --border: #E0E0E0;
-  --border2: #0A0A0A;
-  --red: #CC0000;
-  --green: #006600;
-  --surface: #F5F5F5;
-  --mono: 'IBM Plex Mono', monospace;
-  --cond: 'IBM Plex Sans Condensed', sans-serif;
-  --display: 'Bebas Neue', sans-serif;
+  --bg: #F8F7F4;
+  --bg2: #EFEDE8;
+  --bg3: #E5E2DB;
+  --ink: #141210;
+  --ink2: #5A564F;
+  --ink3: #A09A90;
+  --line: #D8D4CC;
+  --line2: #141210;
+  --red: #C0392B;
+  --green: #2D6A4F;
+  --amber: #B45309;
+  --blue: #1D4ED8;
+  --surf: #FFFFFF;
+  --mono: 'JetBrains Mono', monospace;
+  --body: 'DM Sans', sans-serif;
+  --disp: 'Bebas Neue', sans-serif;
+  --r: 3px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--cond); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+html, body { height: 100%; }
+body { font-family: var(--body); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; overflow: hidden; }
 a { text-decoration: none; color: inherit; }
+button { font-family: var(--body); cursor: pointer; }
 
-.shell { display: grid; grid-template-columns: 160px 1fr; min-height: 100vh; max-width: 100vw; }
+.app { display: grid; grid-template-columns: 200px 1fr; height: 100vh; }
 
 /* SIDEBAR */
-.sidebar { border-right: 1px solid var(--border2); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--bg); flex-shrink: 0; }
-
-.logo-block { padding: 20px 16px 16px; border-bottom: 1px solid var(--border2); }
-.logo-word { font-family: var(--display); font-size: 26px; letter-spacing: 0.06em; line-height: 1; color: var(--text); }
-.logo-sub { font-family: var(--mono); font-size: 7px; color: var(--text3); letter-spacing: 0.22em; text-transform: uppercase; margin-top: 3px; }
-
-.nav { flex: 1; }
-.nav-section { border-bottom: 1px solid var(--border); }
-.nav-section-label { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3); padding: 10px 16px 4px; }
-
-.nav-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 16px; font-size: 11px; font-weight: 500; color: var(--text2); cursor: pointer; border: none; background: none; width: 100%; text-align: left; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.1s, background 0.1s; font-family: var(--cond); }
-.nav-item:hover { color: var(--text); background: var(--surface); }
-.nav-item.active { background: var(--text); color: var(--bg); }
-.nav-item.active .nav-badge { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
-
-.nav-badge { font-family: var(--mono); font-size: 8px; padding: 1px 5px; border: 1px solid currentColor; opacity: 0.6; }
-
-.sidebar-ext { border-top: 1px solid var(--border2); padding: 10px 0; }
-.ext-link { display: flex; align-items: center; gap: 8px; padding: 6px 16px; font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.1s; }
-.ext-link:hover { color: var(--text); }
-.ext-link svg { width: 10px; height: 10px; flex-shrink: 0; }
+.sidebar { background: var(--ink); display: flex; flex-direction: column; overflow: hidden; }
+.brand { padding: 22px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.brand-name { font-family: var(--disp); font-size: 24px; letter-spacing: 0.08em; color: #fff; line-height: 1; }
+.brand-tag { font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.3); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px; }
+.nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+.nav-group { margin-bottom: 4px; }
+.nav-group-label { font-family: var(--mono); font-size: 7px; color: rgba(255,255,255,0.25); letter-spacing: 0.22em; text-transform: uppercase; padding: 8px 20px 4px; }
+.nav-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 20px; background: none; border: none; color: rgba(255,255,255,0.45); font-size: 12px; font-weight: 500; letter-spacing: 0.02em; text-align: left; transition: color 0.15s, background 0.15s; }
+.nav-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
+.nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); }
+.nav-btn.dim { opacity: 0.3; cursor: not-allowed; }
+.nav-count { font-family: var(--mono); font-size: 9px; background: var(--red); color: #fff; padding: 1px 5px; border-radius: 2px; }
+.sidebar-foot { border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0; }
+.foot-link { display: flex; align-items: center; gap: 8px; padding: 6px 20px; font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.15s; }
+.foot-link:hover { color: rgba(255,255,255,0.6); }
+.foot-link svg { width: 11px; height: 11px; flex-shrink: 0; }
 
 /* MAIN */
-.main { display: flex; flex-direction: column; min-width: 0; overflow-x: hidden; }
+.main { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+.topbar { height: 44px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; flex-shrink: 0; background: var(--surf); }
+.topbar-path { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink3); }
+.topbar-path .cur { color: var(--ink); }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.live-dot { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.1em; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(45,106,79,0.4); } 50% { box-shadow: 0 0 0 4px rgba(45,106,79,0); } }
+.content { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.screen { display: none; animation: fadein 0.18s ease; }
+.screen.active { display: block; }
+@keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-.topbar { padding: 0 24px; height: 42px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; flex-shrink: 0; }
-.topbar-left { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-.topbar-page { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); white-space: nowrap; }
-.topbar-sep { font-family: var(--mono); font-size: 10px; color: var(--text3); }
-.topbar-crumb { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-.sys-status { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; flex-shrink: 0; }
-.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+/* OVERVIEW */
+.ov-hero { padding: 32px 28px 24px; border-bottom: 1px solid var(--line); }
+.ov-hero-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.ov-title { font-family: var(--disp); font-size: 44px; letter-spacing: 0.04em; color: var(--ink); line-height: 0.95; }
+.ov-subtitle { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 8px; }
+.ov-date { font-family: var(--mono); font-size: 10px; color: var(--ink3); letter-spacing: 0.1em; text-align: right; }
+.ov-date strong { display: block; font-size: 13px; color: var(--ink); margin-top: 2px; }
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line2); margin: 20px 28px 0; }
+.kpi { padding: 16px 18px; border-right: 1px solid var(--line2); background: var(--surf); }
+.kpi:last-child { border-right: none; }
+.kpi-val { font-family: var(--disp); font-size: 40px; line-height: 1; letter-spacing: 0.02em; }
+.kpi-val.green { color: var(--green); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.amber { color: var(--amber); }
+.kpi-lbl { font-family: var(--mono); font-size: 8px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 4px; }
+.kpi-note { font-family: var(--mono); font-size: 9px; color: var(--green); margin-top: 3px; }
+.kpi-note.warn { color: var(--red); }
+.kpi-note.neutral { color: var(--ink3); }
+.section-head { padding: 20px 28px 10px; display: flex; align-items: baseline; gap: 10px; }
+.section-head h3 { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink3); }
 
-.content { flex: 1; min-width: 0; overflow-x: hidden; }
+/* 30-DAY STREAK */
+.streak-section { margin: 0 28px 28px; border: 1px solid var(--line2); background: var(--surf); }
+.streak-head { padding: 12px 16px; background: var(--ink); display: flex; align-items: center; justify-content: space-between; }
+.streak-head span { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.12em; }
+.streak-head strong { font-family: var(--disp); font-size: 18px; color: #fff; letter-spacing: 0.06em; }
+.streak-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; padding: 16px; }
+.streak-day { aspect-ratio: 1; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; cursor: pointer; transition: all 0.1s; position: relative; }
+.streak-day.done { background: var(--ink); color: #fff; }
+.streak-day.today { background: var(--green); color: #fff; font-weight: 700; }
+.streak-day.future { background: var(--bg2); color: var(--ink3); border: 1px solid var(--line); }
+.streak-day.skipped { background: rgba(192,57,43,0.12); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+.streak-day:hover .streak-tooltip { display: block; }
+.streak-tooltip { display: none; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-family: var(--mono); font-size: 7px; white-space: nowrap; padding: 3px 6px; z-index: 10; pointer-events: none; }
 
-.screen { display: none; }
-.screen.active { display: block; animation: in 0.15s ease; }
-@keyframes in { from { opacity: 0; } to { opacity: 1; } }
+/* FLOWS TABLE */
+.flows { margin: 0 28px; border: 1px solid var(--line2); margin-bottom: 28px; background: var(--surf); }
+.flows-head { display: grid; grid-template-columns: 1fr 80px 70px 70px 70px 32px; padding: 7px 16px; background: var(--ink); gap: 8px; font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.15em; }
+.flow-row { display: grid; grid-template-columns: 1fr 80px 70px 70px 70px 32px; padding: 12px 16px; border-top: 1px solid var(--line); gap: 8px; align-items: center; cursor: pointer; transition: background 0.12s; }
+.flow-row:hover { background: var(--bg2); }
+.flow-name { font-weight: 600; font-size: 13px; color: var(--ink); }
+.flow-desc { font-family: var(--mono); font-size: 9px; color: var(--ink3); margin-top: 2px; }
+.badge { font-family: var(--mono); font-size: 8px; padding: 2px 7px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.06em; display: inline-block; }
+.badge-live { background: rgba(45,106,79,0.12); color: var(--green); border: 1px solid rgba(45,106,79,0.3); }
+.badge-build { background: rgba(180,83,9,0.1); color: var(--amber); border: 1px solid rgba(180,83,9,0.25); }
+.badge-plan { background: var(--bg2); color: var(--ink3); border: 1px solid var(--line); }
+.cell { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.cell.muted { color: var(--ink3); }
+.arrow { font-size: 14px; color: var(--ink3); text-align: right; }
 
-/* GRAPHIC BANNER */
-.graphic-banner { width: 100%; border-bottom: 1px solid var(--border); overflow: hidden; height: 110px; position: relative; background: var(--bg); }
+/* GROWTH */
+.growth-grid { display: grid; grid-template-columns: 1fr 1fr; margin: 0 28px 28px; border: 1px solid var(--line2); background: var(--surf); }
+.growth-panel { padding: 18px; }
+.growth-panel + .growth-panel { border-left: 1px solid var(--line); }
+.gp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.gp-title { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink3); }
+.gp-val { font-family: var(--disp); font-size: 28px; color: var(--ink); letter-spacing: 0.02em; }
+.sparkline { display: flex; align-items: flex-end; gap: 3px; height: 48px; }
+.sp-bar { flex: 1; border-radius: 1px 1px 0 0; transition: opacity 0.1s; }
+.sp-bar.dark { background: var(--ink); }
+.sp-bar.mid { background: var(--bg3); }
 
-/* TICKER */
-.ticker { border-bottom: 1px solid var(--border); padding: 6px 0; overflow: hidden; white-space: nowrap; }
-.ticker-inner { display: inline-flex; gap: 0; animation: tick 35s linear infinite; }
-@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.ticker-item { font-family: var(--display); font-size: 12px; letter-spacing: 0.12em; color: var(--text3); padding: 0 20px; text-transform: uppercase; }
-.ticker-item.accent { color: var(--red); }
+/* RUN WORKFLOW */
+.run-hero { padding: 24px 28px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; background: var(--surf); }
+.run-hero-left h2 { font-family: var(--disp); font-size: 28px; letter-spacing: 0.04em; }
+.run-hero-left p { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.run-btns { display: flex; gap: 8px; }
+.btn { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; padding: 9px 16px; border: 1px solid var(--ink); background: none; color: var(--ink); transition: all 0.15s; cursor: pointer; }
+.btn:hover { background: var(--ink); color: #fff; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: #333; }
+.btn-green { border-color: var(--green); color: var(--green); }
+.btn-green:hover { background: var(--green); color: #fff; }
+.btn-red { border-color: var(--red); color: var(--red); }
+.btn-red:hover { background: var(--red); color: #fff; }
+.btn-sm { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; padding: 6px 12px; border: 1px solid var(--ink); background: none; color: var(--ink); transition: all 0.15s; cursor: pointer; }
+.btn-sm:hover { background: var(--ink); color: #fff; }
+.btn-sm.danger { border-color: var(--line); color: var(--ink3); }
+.btn-sm.danger:hover { border-color: var(--red); color: var(--red); background: none; }
 
-/* STATS */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid var(--border2); margin: 0; }
-.stat-block { padding: 14px 16px; border-right: 1px solid var(--border); }
-.stat-block:last-child { border-right: none; }
-.stat-val { font-family: var(--display); font-size: 34px; line-height: 1; color: var(--text); letter-spacing: 0.02em; }
-.stat-val.red { color: var(--red); }
-.stat-val.green { color: var(--green); }
-.stat-label { font-family: var(--mono); font-size: 7.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.15em; margin-top: 3px; }
-.stat-delta { font-family: var(--mono); font-size: 8.5px; color: var(--green); margin-top: 2px; }
-.stat-delta.warn { color: var(--red); }
+.workflow-states { padding: 24px 28px; }
+.state-idle, .state-running, .state-idea, .state-draft { display: none; }
+.state-idle.vis, .state-running.vis, .state-idea.vis, .state-draft.vis { display: block; }
 
-/* SECTION */
-.sec-label { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text3); padding-bottom: 8px; border-bottom: 1px solid var(--border2); margin-bottom: 0; }
+.idle-card { border: 1px solid var(--line); background: var(--surf); padding: 40px 28px; text-align: center; max-width: 480px; margin: 0 auto; }
+.idle-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+.idle-card h3 { font-family: var(--disp); font-size: 22px; letter-spacing: 0.04em; margin-bottom: 6px; }
+.idle-card p { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
 
-/* PROJECT TABLE */
-.project-table { border: 1px solid var(--border2); border-top: none; }
-.project-thead { display: grid; grid-template-columns: minmax(0,2fr) 90px 64px 64px 64px 40px; padding: 6px 22px; background: var(--text); font-family: var(--mono); font-size: 8px; color: var(--bg); text-transform: uppercase; letter-spacing: 0.15em; gap: 8px; }
-.project-row { display: grid; grid-template-columns: minmax(0,2fr) 90px 64px 64px 64px 40px; padding: 10px 22px; border-bottom: 1px solid var(--border); align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
-.project-row:last-child { border-bottom: none; }
-.project-row:hover { background: var(--surface); }
-.proj-name { font-size: 12px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.proj-desc { font-family: var(--mono); font-size: 8.5px; color: var(--text3); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.running-card { border: 1px solid var(--line); background: var(--surf); padding: 32px 28px; max-width: 480px; margin: 0 auto; }
+.progress-steps { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.pstep { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; }
+.pstep.done { color: var(--ink); }
+.pstep.active { color: var(--ink2); }
+.pstep-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--line); flex-shrink: 0; }
+.pstep.done .pstep-dot { background: var(--ink); border-color: var(--ink); }
+.pstep.active .pstep-dot { border-color: var(--ink2); animation: blink 0.8s infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-.pill { font-family: var(--mono); font-size: 7.5px; padding: 2px 6px; border: 1px solid var(--border2); text-transform: uppercase; letter-spacing: 0.08em; display: inline-block; }
-.pill-live { border-color: var(--green); color: var(--green); }
-.pill-build { border-color: #AA6600; color: #AA6600; }
-.pill-off { border-color: var(--text3); color: var(--text3); }
+/* IDEA CARD */
+.idea-card { border: 1px solid var(--line2); background: var(--surf); overflow: hidden; }
+.idea-card-head { padding: 10px 16px; background: var(--ink); display: flex; align-items: center; justify-content: space-between; }
+.idea-card-head span { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.12em; }
+.idea-card-body { padding: 20px 20px 16px; }
+.idea-title-big { font-size: 18px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 12px; }
+.idea-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.tag { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 7px; border: 1px solid var(--line); color: var(--ink3); border-radius: 2px; }
+.idea-hook { border-left: 2px solid var(--ink); padding: 6px 10px; font-family: var(--mono); font-size: 10px; color: var(--ink2); line-height: 1.5; margin-bottom: 12px; font-style: italic; background: var(--bg); }
+.idea-why { font-size: 13px; color: var(--ink2); line-height: 1.6; margin-bottom: 12px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; }
+.idea-source { font-family: var(--mono); font-size: 8px; color: var(--ink3); margin-bottom: 16px; }
+.idea-card-foot { padding: 12px 20px 16px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stars-row { display: flex; align-items: center; gap: 8px; }
+.stars-lbl { font-family: var(--mono); font-size: 8px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.1em; }
+.stars { display: flex; gap: 2px; }
+.star { font-size: 16px; cursor: pointer; color: var(--line); transition: color 0.1s; line-height: 1; }
+.star.lit { color: #D97706; }
+.rating-txt { font-family: var(--mono); font-size: 9px; color: var(--ink3); margin-left: 4px; }
+.idea-actions { display: flex; gap: 8px; }
 
-.cell-num { font-family: var(--mono); font-size: 11px; color: var(--text); }
-.cell-num.muted { color: var(--text3); }
-.arrow-btn { font-family: var(--mono); font-size: 11px; color: var(--text3); text-align: right; }
-.project-row:hover .arrow-btn { color: var(--text); }
+/* DRAFT OVERLAY */
+.overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; animation: fadein 0.2s ease; backdrop-filter: blur(3px); }
+.overlay.hidden { display: none; }
+.overlay-panel { background: var(--surf); width: 680px; max-width: 95vw; max-height: 88vh; display: flex; flex-direction: column; border: 1px solid var(--line2); animation: slidein 0.22s ease; }
+@keyframes slidein { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--ink); flex-shrink: 0; }
+.overlay-head h3 { font-family: var(--disp); font-size: 18px; letter-spacing: 0.06em; color: #fff; }
+.overlay-head-right { display: flex; align-items: center; gap: 10px; }
+.overlay-close { background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; padding: 5px 10px; cursor: pointer; transition: all 0.15s; }
+.overlay-close:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+.overlay-body { flex: 1; overflow-y: auto; padding: 20px; }
+.post-text { font-size: 14px; line-height: 1.7; color: var(--ink); white-space: pre-wrap; font-family: var(--body); background: var(--bg); border: 1px solid var(--line); padding: 16px; border-radius: 2px; }
+.post-text[contenteditable="true"] { outline: none; border-color: var(--ink); background: #fff; }
+.post-meta { display: flex; gap: 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.pm { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.1em; }
+.pm strong { color: var(--ink); }
+.overlay-foot { border-top: 1px solid var(--line); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-shrink: 0; }
+.overlay-foot-left { display: flex; gap: 8px; }
+.overlay-foot-right { display: flex; gap: 8px; }
 
-.section-wrap { padding: 16px 22px 0; border-top: none; }
+/* RATING OVERLAY (post-publish) */
+.rating-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.75); z-index: 200; display: flex; align-items: center; justify-content: center; }
+.rating-overlay.hidden { display: none; }
+.rating-box { background: var(--surf); width: 420px; border: 1px solid var(--line2); }
+.rating-box-head { padding: 14px 20px; background: var(--green); }
+.rating-box-head h3 { font-family: var(--disp); font-size: 20px; letter-spacing: 0.06em; color: #fff; }
+.rating-box-body { padding: 20px; }
+.rating-box-body p { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+.big-stars { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+.big-star { font-size: 28px; cursor: pointer; color: var(--line); transition: color 0.1s; }
+.big-star.lit { color: #D97706; }
+.rating-notes { width: 100%; font-family: var(--body); font-size: 13px; border: 1px solid var(--line); padding: 8px 10px; outline: none; resize: none; height: 60px; margin-bottom: 14px; transition: border-color 0.15s; }
+.rating-notes:focus { border-color: var(--ink); }
+.rating-box-foot { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* GENERATING OVERLAY */
+.gen-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; }
+.gen-overlay.hidden { display: none; }
+.gen-box { background: var(--ink); color: #fff; padding: 32px 40px; text-align: center; min-width: 300px; }
+.gen-box h3 { font-family: var(--disp); font-size: 22px; letter-spacing: 0.06em; margin-bottom: 8px; }
+.gen-box p { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.12em; }
+.loader { display: flex; gap: 5px; justify-content: center; margin-top: 16px; }
+.l-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); animation: bounce 1.2s infinite; }
+.l-dot:nth-child(2) { animation-delay: 0.2s; }
+.l-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-6px); opacity: 1; } }
 
 /* ANALYTICS */
-.page-header { padding: 18px 22px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; }
-.page-header h2 { font-family: var(--display); font-size: 26px; letter-spacing: 0.05em; color: var(--text); }
-.page-header p { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 3px; }
-
-.metrics-row { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--border); }
-.metric-cell { padding: 13px 16px; border-right: 1px solid var(--border); }
-.metric-cell:last-child { border-right: none; }
-.metric-cell:nth-child(even) { background: var(--surface); }
-.mv { font-family: var(--display); font-size: 30px; letter-spacing: 0.02em; color: var(--text); line-height: 1; }
-.ml { font-family: var(--mono); font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text3); margin-top: 3px; }
-.md { font-family: var(--mono); font-size: 8.5px; color: var(--green); margin-top: 2px; }
-
-.chart-block { border-bottom: 1px solid var(--border); }
-.chart-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
-.chart-head-lbl { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text2); }
-.chart-body { padding: 14px 16px; }
-
-.bars { display: flex; align-items: flex-end; gap: 3px; height: 64px; }
-.bc { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
-.bar { width: 100%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-.bar:hover { background: #CCC; }
-.bar.hi { background: var(--text); border-color: var(--text); }
-.bl { font-family: var(--mono); font-size: 7px; color: var(--text3); }
-
-.two-charts { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
-.two-charts > div + div { border-left: 1px solid var(--border); }
-
-.corr-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.corr-row:last-child { margin-bottom: 0; }
-.cl { font-family: var(--mono); font-size: 7.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; width: 50px; flex-shrink: 0; }
-.ct { flex: 1; height: 5px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
-.cf { height: 100%; }
-.cf-h { background: var(--text); }
-.cf-m { background: var(--text3); }
-.cf-l { background: var(--border); }
-.cv { font-family: var(--mono); font-size: 9px; color: var(--text2); width: 46px; text-align: right; }
-
-/* IDEAS */
-.ideas-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; border-bottom: 1px solid var(--border); }
-.run-tag { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
-.run-tag strong { color: var(--text); }
-.btn-row { display: flex; gap: 6px; }
-
-.btn { font-family: var(--mono); font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 6px 13px; border: 1px solid var(--border2); background: none; color: var(--text); cursor: pointer; transition: all 0.1s; }
-.btn:hover { background: var(--text); color: var(--bg); }
-.btn-solid { background: var(--text); color: var(--bg); }
-.btn-solid:hover { background: #333; }
-
-.idea-row { border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 30px 1fr 195px; }
-.idea-row:last-child { border-bottom: none; }
-.idea-numcol { border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 14px; font-family: var(--display); font-size: 18px; color: var(--text3); }
-.idea-content { padding: 13px 16px 13px 14px; }
-.idea-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.01em; margin-bottom: 5px; line-height: 1.3; }
-.idea-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 7px; }
-.tag { font-family: var(--mono); font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); border: 1px solid var(--border); padding: 1px 5px; }
-.idea-hook { font-family: var(--mono); font-size: 9px; color: var(--text2); font-style: italic; line-height: 1.5; border-left: 2px solid var(--border2); padding-left: 8px; }
-.idea-source { font-family: var(--mono); font-size: 7.5px; color: var(--text3); margin-top: 6px; }
-
-.idea-actions { border-left: 1px solid var(--border); padding: 13px 14px; display: flex; flex-direction: column; gap: 9px; justify-content: center; background: var(--surface); }
-.stars-label { font-family: var(--mono); font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text3); }
-.stars { display: flex; gap: 2px; margin-top: 4px; }
-.star { font-size: 13px; cursor: pointer; color: var(--border2); transition: color 0.1s; user-select: none; line-height: 1; }
-.star.lit { color: #CC8800; }
-.star:hover { color: #CC8800; }
-.rval { font-family: var(--mono); font-size: 8.5px; color: var(--text3); margin-top: 3px; }
-.action-btns { display: flex; gap: 5px; margin-top: 2px; }
-
-.btn-sm { font-family: var(--mono); font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 9px; border: 1px solid var(--border2); background: none; color: var(--text); cursor: pointer; transition: all 0.1s; white-space: nowrap; }
-.btn-sm:hover { background: var(--text); color: var(--bg); }
-.btn-sm.approved { background: var(--green); border-color: var(--green); color: white; cursor: default; }
-.btn-sm.ghost { border-color: var(--border); color: var(--text3); }
-.btn-sm.ghost:hover { border-color: var(--red); color: var(--red); background: none; }
+.page-hero { padding: 24px 28px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: space-between; }
+.page-hero-title { font-family: var(--disp); font-size: 32px; letter-spacing: 0.04em; }
+.page-hero-sub { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.page-hero-right { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-align: right; }
+.metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); background: var(--surf); }
+.metric { padding: 14px 20px; border-right: 1px solid var(--line); }
+.metric:last-child { border-right: none; }
+.metric:nth-child(2n) { background: var(--bg); }
+.metric-v { font-family: var(--disp); font-size: 32px; color: var(--ink); line-height: 1; }
+.metric-l { font-family: var(--mono); font-size: 8px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 3px; }
+.metric-d { font-family: var(--mono); font-size: 9px; color: var(--green); margin-top: 2px; }
+.chart-area { padding: 20px 28px; border-bottom: 1px solid var(--line); background: var(--surf); }
+.chart-area-head { display: flex; justify-content: space-between; margin-bottom: 14px; }
+.ca-title { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink2); }
+.ca-note { font-family: var(--mono); font-size: 9px; color: var(--ink3); }
+.big-bars { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+.bb { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.bb-bar { width: 100%; border-radius: 1px 1px 0 0; background: var(--bg3); cursor: pointer; transition: background 0.1s; }
+.bb-bar:hover, .bb-bar.hi { background: var(--ink); }
+.bb-lbl { font-family: var(--mono); font-size: 7px; color: var(--ink3); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; }
+.two-col > div { border-right: 1px solid var(--line); }
+.two-col > div:last-child { border-right: none; }
+.corr-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ci-lbl { font-family: var(--mono); font-size: 8px; color: var(--ink3); width: 54px; flex-shrink: 0; text-transform: uppercase; }
+.ci-track { flex: 1; height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; }
+.ci-fill { height: 100%; border-radius: 2px; background: var(--ink); }
+.ci-fill.mid { background: var(--ink3); }
+.ci-fill.low { background: var(--bg3); }
+.ci-num { font-family: var(--mono); font-size: 10px; color: var(--ink2); width: 48px; text-align: right; }
 
 /* HISTORY */
-.hist-header { padding: 18px 22px 12px; border-bottom: 2px solid var(--border2); display: flex; align-items: flex-end; justify-content: space-between; }
-.hist-header h2 { font-family: var(--display); font-size: 26px; letter-spacing: 0.05em; }
-.hist-header p { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 2px; }
+.hist-head { padding: 24px 28px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: space-between; }
+.hist-head h2 { font-family: var(--disp); font-size: 28px; letter-spacing: 0.04em; }
+.hist-head p { font-family: var(--mono); font-size: 9px; color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.filter-row { display: flex; border-bottom: 1px solid var(--line); background: var(--surf); }
+.filter-pill { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 14px; border: none; border-right: 1px solid var(--line); background: none; color: var(--ink3); cursor: pointer; transition: all 0.12s; }
+.filter-pill:hover { background: var(--bg2); color: var(--ink); }
+.filter-pill.active { background: var(--ink); color: #fff; }
+.hist-table { background: var(--surf); }
+.hist-thead { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 50px 80px; padding: 6px 28px; background: var(--ink); font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.14em; gap: 10px; }
+.hist-row { display: grid; grid-template-columns: minmax(0,1fr) 60px 110px 52px 50px 80px; padding: 10px 28px; border-bottom: 1px solid var(--line); gap: 10px; align-items: center; cursor: pointer; transition: background 0.1s; }
+.hist-row:nth-child(even) { background: var(--bg); }
+.hist-row:hover { background: var(--bg2) !important; }
+.ht { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm { font-family: var(--mono); font-size: 10px; color: var(--ink2); }
+.score-num { font-family: var(--disp); font-size: 20px; line-height: 1; }
+.score-hi { color: var(--green); }
+.score-mid { color: var(--amber); }
+.score-lo { color: var(--red); }
 
-.filter-strip { display: flex; border-bottom: 1px solid var(--border); }
-.filter-btn { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; padding: 7px 13px; border: none; border-right: 1px solid var(--border); background: var(--bg); color: var(--text3); cursor: pointer; transition: all 0.1s; }
-.filter-btn:hover { background: var(--surface); color: var(--text); }
-.filter-btn.active { background: var(--text); color: var(--bg); }
+/* IDEAS BANK */
+.ideas-bank-layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 44px); }
+.ideas-form-col { border-right: 1px solid var(--line); background: var(--surf); padding: 24px; display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
+.ideas-form-col h2 { font-family: var(--disp); font-size: 26px; letter-spacing: 0.04em; margin-bottom: 4px; }
+.ideas-form-col .sub { font-family: var(--mono); font-size: 8px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 22px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink3); margin-bottom: 5px; }
+.field textarea, .field input, .field select { width: 100%; font-family: var(--body); font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 9px 11px; outline: none; transition: border-color 0.15s; border-radius: 2px; appearance: none; }
+.field textarea { resize: vertical; min-height: 100px; line-height: 1.55; }
+.field textarea:focus, .field input:focus, .field select:focus { border-color: var(--ink); background: #fff; }
+.field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23A09A90' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+.submit-btn { width: 100%; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 11px; border: none; background: var(--ink); color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 4px; }
+.submit-btn:hover { background: #333; }
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.form-status { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px; padding: 8px 10px; border-radius: 2px; display: none; }
+.form-status.ok { display: block; background: rgba(45,106,79,0.1); color: var(--green); border: 1px solid rgba(45,106,79,0.25); }
+.form-status.err { display: block; background: rgba(192,57,43,0.08); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+.ideas-list-col { padding: 20px 24px; overflow-y: auto; }
+.ideas-list-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.ideas-list-head h3 { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink3); }
+.ideas-list-head span { font-family: var(--mono); font-size: 9px; color: var(--ink3); }
+.idea-item { border: 1px solid var(--line); background: var(--surf); margin-bottom: 8px; padding: 12px 14px; transition: border-color 0.1s; animation: fadein 0.2s ease; }
+.idea-item:hover { border-color: var(--ink3); }
+.idea-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.idea-item-text { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; flex: 1; }
+.idea-item-meta { display: flex; align-items: center; gap: 8px; }
+.idea-cat { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 7px; border-radius: 2px; border: 1px solid var(--line); color: var(--ink3); }
+.idea-status-pill { font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 2px; }
+.sp-unused { background: rgba(29,78,216,0.08); color: var(--blue); border: 1px solid rgba(29,78,216,0.2); }
+.sp-used { background: var(--bg2); color: var(--ink3); border: 1px solid var(--line); }
+.sp-rejected { background: rgba(192,57,43,0.08); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+.idea-item-date { font-family: var(--mono); font-size: 8px; color: var(--ink3); }
+.ideas-empty { text-align: center; padding: 48px 20px; font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; }
 
-.hist-thead { display: grid; grid-template-columns: minmax(0,1fr) 66px 88px 56px 52px 76px; padding: 6px 22px; background: var(--text); font-family: var(--mono); font-size: 8px; color: var(--bg); text-transform: uppercase; letter-spacing: 0.15em; gap: 10px; }
-.hist-row { display: grid; grid-template-columns: minmax(0,1fr) 66px 88px 56px 52px 76px; padding: 9px 22px; border-bottom: 1px solid var(--border); gap: 10px; align-items: center; cursor: pointer; transition: background 0.1s; }
-.hist-row:nth-child(even) { background: var(--surface); }
-.hist-row:hover { background: #EBEBEB !important; }
-.ht { font-family: var(--cond); font-size: 11.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hm { font-family: var(--mono); font-size: 10px; color: var(--text2); }
-.hs { font-family: var(--display); font-size: 19px; line-height: 1; }
-.hs-hi { color: var(--green); }
-.hs-mi { color: #AA6600; }
-.hs-lo { color: var(--red); }
+/* SETTINGS */
+.settings-layout { padding: 28px; max-width: 600px; }
+.settings-layout h2 { font-family: var(--disp); font-size: 28px; letter-spacing: 0.04em; margin-bottom: 4px; }
+.settings-layout .sub { font-family: var(--mono); font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 28px; }
+.settings-section { margin-bottom: 28px; }
+.settings-section h3 { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink3); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.setting-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.setting-row label { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink2); min-width: 130px; flex-shrink: 0; }
+.setting-row input { flex: 1; font-family: var(--mono); font-size: 11px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 7px 10px; outline: none; transition: border-color 0.15s; }
+.setting-row input:focus { border-color: var(--ink); background: #fff; }
+.save-settings { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 9px 20px; border: 1px solid var(--ink); background: var(--ink); color: #fff; cursor: pointer; transition: background 0.15s; }
+.save-settings:hover { background: #333; }
 
 /* TOAST */
-.toast { position: fixed; bottom: 18px; right: 18px; background: var(--text); color: var(--bg); font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 9px 14px; z-index: 200; opacity: 0; transform: translateY(6px); transition: all 0.2s; pointer-events: none; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 10px 16px; z-index: 300; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; }
 .toast.show { opacity: 1; transform: none; }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: var(--border2); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--line); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink3); }
 </style>
 </head>
 <body>
-
-<div class="shell">
-
+<div class="app">
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo-block">
-      <div class="logo-word">Daemien</div>
-      <div class="logo-sub">Automation OS</div>
+    <div class="brand">
+      <div class="brand-name">Daemien</div>
+      <div class="brand-tag">Automation OS</div>
     </div>
     <nav class="nav">
-      <div class="nav-section">
-        <div class="nav-section-label">Workspace</div>
-        <button class="nav-item active" onclick="nav('overview',this)">Overview</button>
+      <div class="nav-group">
+        <div class="nav-group-label">Workspace</div>
+        <button class="nav-btn active" onclick="nav('overview',this)">Overview</button>
       </div>
-      <div class="nav-section">
-        <div class="nav-section-label">LinkedIn</div>
-        <button class="nav-item" onclick="nav('li-analytics',this)">Analytics</button>
-        <button class="nav-item" onclick="nav('li-ideas',this)">Post ideas <span class="nav-badge">3</span></button>
-        <button class="nav-item" onclick="nav('li-history',this)">History</button>
+      <div class="nav-group">
+        <div class="nav-group-label">LinkedIn</div>
+        <button class="nav-btn" onclick="nav('li-run',this)">Run Workflow <span class="nav-count" id="pending-badge" style="display:none">1</span></button>
+        <button class="nav-btn" onclick="nav('li-ideas-bank',this)">My Ideas</button>
+        <button class="nav-btn" onclick="nav('li-analytics',this)">Analytics</button>
+        <button class="nav-btn" onclick="nav('li-history',this)">History</button>
       </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Email</div>
-        <button class="nav-item" style="opacity:0.35;cursor:not-allowed">Campaigns</button>
+      <div class="nav-group">
+        <div class="nav-group-label">System</div>
+        <button class="nav-btn" onclick="nav('settings',this)">Settings</button>
       </div>
-      <div class="nav-section">
-        <div class="nav-section-label">X / Twitter</div>
-        <button class="nav-item" style="opacity:0.35;cursor:not-allowed">Threads</button>
+      <div class="nav-group">
+        <div class="nav-group-label">Platforms</div>
+        <button class="nav-btn dim">Email</button>
+        <button class="nav-btn dim">X / Twitter</button>
       </div>
     </nav>
-    <div class="sidebar-ext">
-      <a href="https://github.com/your-repo" target="_blank" class="ext-link">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        GitHub
-      </a>
-      <a href="https://app.n8n.cloud" target="_blank" class="ext-link">
+    <div class="sidebar-foot">
+      <a href="https://app.n8n.cloud" target="_blank" class="foot-link">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="8" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><path d="M6 7l4-2M6 9l4 2"/></svg>
-        N8N
-      </a>
-      <a href="https://vercel.com/dashboard" target="_blank" class="ext-link">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L16 15H0L8 1z"/></svg>
-        Vercel
+        N8N Console
       </a>
     </div>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
     <div class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-page" id="page-title">Overview</span>
-        <span class="topbar-sep">/</span>
-        <span class="topbar-crumb" id="page-crumb">Workspace</span>
+      <div class="topbar-path">
+        <span id="crumb-root">Workspace</span>
+        <span>·</span>
+        <span class="cur" id="crumb-page">Overview</span>
       </div>
-      <div class="sys-status"><div class="status-dot"></div>Systems live</div>
+      <div class="topbar-right">
+        <div class="live-dot"><div class="dot"></div>Live</div>
+      </div>
     </div>
 
     <div class="content">
 
       <!-- OVERVIEW -->
       <div class="screen active" id="screen-overview">
-
-        <div class="graphic-banner">
-          <svg width="100%" height="110" viewBox="0 0 900 110" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="55" x2="900" y2="55" stroke="#E8E8E8" stroke-width="0.5"/>
-            <line x1="450" y1="0" x2="450" y2="110" stroke="#E8E8E8" stroke-width="0.5"/>
-            <g transform="translate(55,8)" opacity="0.06">
-              <path d="M50 75 C30 55 0 50 10 36 C20 22 40 32 50 42 C50 32 45 12 60 7 C75 2 80 22 75 36 C85 26 100 21 105 31 C110 41 90 51 80 61 C90 61 100 66 95 76 C90 86 75 81 65 76 C60 86 55 91 45 91 C35 91 38 81 50 75Z" fill="#000"/>
-              <ellipse cx="60" cy="7" rx="8" ry="9" fill="#000"/>
-            </g>
-            <text x="450" y="68" font-family="'Bebas Neue',sans-serif" font-size="60" fill="#0A0A0A" opacity="0.04" text-anchor="middle" letter-spacing="18">WORK BUILDS EMPIRES</text>
-            <g transform="translate(782,14)" opacity="0.06"><text font-family="'Bebas Neue',sans-serif" font-size="76" fill="#000">$</text></g>
-            <rect x="18" y="8" width="175" height="94" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.07"/>
-            <rect x="22" y="12" width="167" height="86" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.05"/>
-            <rect x="707" y="8" width="175" height="94" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.07"/>
-            <rect x="711" y="12" width="167" height="86" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.05"/>
-            <text x="28" y="22" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">N4830217A</text>
-            <text x="718" y="22" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.1" letter-spacing="2">N4830217A</text>
-            <text x="28" y="98" font-family="'Bebas Neue',sans-serif" font-size="26" fill="#000" opacity="0.05">100</text>
-            <text x="144" y="98" font-family="'Bebas Neue',sans-serif" font-size="26" fill="#000" opacity="0.05">100</text>
-            <text x="716" y="98" font-family="'Bebas Neue',sans-serif" font-size="26" fill="#000" opacity="0.05">100</text>
-            <text x="832" y="98" font-family="'Bebas Neue',sans-serif" font-size="26" fill="#000" opacity="0.05">100</text>
-            <ellipse cx="450" cy="55" rx="68" ry="44" fill="none" stroke="#0A0A0A" stroke-width="0.5" opacity="0.05"/>
-            <ellipse cx="450" cy="55" rx="63" ry="39" fill="none" stroke="#0A0A0A" stroke-width="0.3" opacity="0.04"/>
-            <text x="450" y="50" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.09" text-anchor="middle" letter-spacing="3">THE UNITED</text>
-            <text x="450" y="61" font-family="'Bebas Neue',sans-serif" font-size="13" fill="#000" opacity="0.09" text-anchor="middle" letter-spacing="4">DAEMIEN</text>
-            <text x="450" y="72" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#000" opacity="0.09" text-anchor="middle" letter-spacing="3">AUTOMATION CO.</text>
-          </svg>
+        <div class="ov-hero">
+          <div class="ov-hero-top">
+            <div>
+              <div class="ov-title">Overview</div>
+              <div class="ov-subtitle">Daemien · LinkedIn Automation Stack</div>
+            </div>
+            <div class="ov-date"><span>Today</span><strong id="today-date"></strong></div>
+          </div>
         </div>
-
-        <div class="ticker">
-          <div class="ticker-inner">
-            <span class="ticker-item">Build in silence</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Ship every day</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Automate the grind</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Stack the reps</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Process over results</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Compound daily</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Build in silence</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Ship every day</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Automate the grind</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Stack the reps</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Process over results</span><span class="ticker-item accent">$</span>
-            <span class="ticker-item">Compound daily</span><span class="ticker-item accent">$</span>
+        <div style="padding:20px 28px 0;">
+          <div class="kpi-row" style="margin:0;">
+            <div class="kpi"><div class="kpi-val">3</div><div class="kpi-lbl">Active flows</div><div class="kpi-note">All live</div></div>
+            <div class="kpi"><div class="kpi-val" id="ov-posts">0</div><div class="kpi-lbl">Posts published</div><div class="kpi-note" id="ov-posts-note">—</div></div>
+            <div class="kpi"><div class="kpi-val green" id="ov-rating">—</div><div class="kpi-lbl">Avg post rating</div><div class="kpi-note neutral">From your ratings</div></div>
+            <div class="kpi"><div class="kpi-val red" id="ov-pending">0</div><div class="kpi-lbl">Pending approval</div><div class="kpi-note warn" id="ov-pending-note" style="cursor:pointer" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])"></div></div>
           </div>
         </div>
 
-        <div class="stats-row">
-          <div class="stat-block"><div class="stat-val">3</div><div class="stat-label">Active flows</div><div class="stat-delta">All systems live</div></div>
-          <div class="stat-block"><div class="stat-val">47</div><div class="stat-label">Posts published</div><div class="stat-delta">+5 this month</div></div>
-          <div class="stat-block"><div class="stat-val green">7.2</div><div class="stat-label">Avg rating</div><div class="stat-delta">+0.8 vs last month</div></div>
-          <div class="stat-block"><div class="stat-val red">3</div><div class="stat-label">Pending approval</div><div class="stat-delta warn">Action required</div></div>
+        <!-- 30-DAY STREAK -->
+        <div class="section-head" style="margin-top:20px;"><h3>30-day streak · Cursor & AI journal</h3></div>
+        <div class="streak-section">
+          <div class="streak-head">
+            <span>Day progress</span>
+            <strong id="streak-label">Day 0 / 30</strong>
+          </div>
+          <div class="streak-grid" id="streak-grid"></div>
         </div>
 
-        <div class="section-wrap">
-          <div class="sec-label">Projects</div>
-        </div>
-
-        <div class="project-table">
-          <div class="project-thead">
-            <div>Project</div><div>Status</div><div>Published</div><div>Avg score</div><div>Eng. rate</div><div></div>
+        <div class="section-head"><h3>LinkedIn growth</h3></div>
+        <div class="growth-grid">
+          <div class="growth-panel">
+            <div class="gp-head"><span class="gp-title">Followers</span><span class="gp-val">—</span></div>
+            <div class="sparkline" id="followers-spark"></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:6px;">Add via Settings → LinkedIn handle</div>
           </div>
-          <div class="project-row" onclick="nav('li-ideas', document.querySelectorAll('.nav-item')[2])">
-            <div><div class="proj-name">LinkedIn Autoposter</div><div class="proj-desc">Daily generation · approval · performance tracking</div></div>
-            <div><span class="pill pill-live">Live</span></div>
-            <div class="cell-num">14</div><div class="cell-num">6.8</div><div class="cell-num">4.2%</div>
-            <div class="arrow-btn">→</div>
-          </div>
-          <div class="project-row">
-            <div><div class="proj-name">Email Newsletter</div><div class="proj-desc">Weekly digest from RSS feeds + curated sources</div></div>
-            <div><span class="pill pill-build">Building</span></div>
-            <div class="cell-num muted">—</div><div class="cell-num muted">—</div><div class="cell-num muted">—</div>
-            <div class="arrow-btn" style="opacity:0.25">→</div>
-          </div>
-          <div class="project-row">
-            <div><div class="proj-name">X / Twitter Threads</div><div class="proj-desc">Repurpose LinkedIn posts as Twitter threads</div></div>
-            <div><span class="pill pill-off">Planned</span></div>
-            <div class="cell-num muted">—</div><div class="cell-num muted">—</div><div class="cell-num muted">—</div>
-            <div class="arrow-btn" style="opacity:0.25">→</div>
+          <div class="growth-panel">
+            <div class="gp-head"><span class="gp-title">Impressions (30d)</span><span class="gp-val" id="ov-impressions">—</span></div>
+            <div class="sparkline" id="impressions-spark"></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:6px;">Pulled from post history</div>
           </div>
         </div>
 
+        <div class="section-head"><h3>Workflows</h3></div>
+        <div class="flows" style="margin-top:0;">
+          <div class="flows-head"><div>Workflow</div><div>Status</div><div>Posts</div><div>Avg score</div><div>Eng. rate</div><div></div></div>
+          <div class="flow-row" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])">
+            <div><div class="flow-name">LinkedIn Autoposter</div><div class="flow-desc">Daily idea generation · human approval · post & track</div></div>
+            <div><span class="badge badge-live">Live</span></div>
+            <div class="cell" id="flow-posts">—</div>
+            <div class="cell" id="flow-score">—</div>
+            <div class="cell muted">—</div>
+            <div class="arrow">→</div>
+          </div>
+          <div class="flow-row">
+            <div><div class="flow-name">Email Newsletter</div><div class="flow-desc">Weekly digest from RSS + curated sources</div></div>
+            <div><span class="badge badge-build">Building</span></div>
+            <div class="cell muted">—</div><div class="cell muted">—</div><div class="cell muted">—</div>
+            <div class="arrow" style="opacity:.25">→</div>
+          </div>
+          <div class="flow-row">
+            <div><div class="flow-name">X / Twitter Threads</div><div class="flow-desc">Repurpose approved LinkedIn posts as threads</div></div>
+            <div><span class="badge badge-plan">Planned</span></div>
+            <div class="cell muted">—</div><div class="cell muted">—</div><div class="cell muted">—</div>
+            <div class="arrow" style="opacity:.25">→</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUN WORKFLOW -->
+      <div class="screen" id="screen-li-run">
+        <div class="run-hero">
+          <div class="run-hero-left">
+            <h2>Run Workflow</h2>
+            <p>LinkedIn Autoposter · Generate, review & approve</p>
+          </div>
+          <div class="run-btns">
+            <button class="btn" onclick="resetWorkflow()">Reset</button>
+            <button class="btn btn-primary" id="run-btn" onclick="startWorkflow()">▶ Run now</button>
+          </div>
+        </div>
+        <div class="workflow-states" id="wf-states">
+          <div class="state-idle vis" id="state-idle">
+            <div class="idle-card">
+              <div class="idle-icon">◎</div>
+              <h3>Ready to run</h3>
+              <p>Click "Run now" to generate today's post idea</p>
+              <button class="btn btn-primary" onclick="startWorkflow()">▶ Start workflow</button>
+            </div>
+          </div>
+          <div class="state-running" id="state-running">
+            <div class="running-card">
+              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);">Workflow running</div>
+              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;">Fetching signals</div>
+              <div class="progress-steps">
+                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Fetching sources — Luma, Indie Hackers, idea bank</div>
+                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Scoring topics by relevance</div>
+                <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Generating idea + hook</div>
+                <div class="pstep" id="pstep-3"><div class="pstep-dot"></div>Awaiting your approval</div>
+              </div>
+            </div>
+          </div>
+          <div class="state-idea" id="state-idea">
+            <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);margin-bottom:12px;">Idea ready · approve or reject</div>
+            <div class="idea-card">
+              <div class="idea-card-head">
+                <span>Post idea</span>
+                <span id="idea-date-lbl"></span>
+              </div>
+              <div class="idea-card-body">
+                <div class="idea-title-big" id="idea-title">—</div>
+                <div class="idea-tags" id="idea-tags"></div>
+                <div class="idea-hook" id="idea-hook">—</div>
+                <div class="idea-why" id="idea-why"></div>
+                <div class="idea-source" id="idea-source"></div>
+              </div>
+              <div class="idea-card-foot">
+                <div class="stars-row">
+                  <span class="stars-lbl">Rate idea</span>
+                  <div class="stars" id="idea-stars">
+                    <span class="star" onclick="rateStar(1)">★</span>
+                    <span class="star" onclick="rateStar(2)">★</span>
+                    <span class="star" onclick="rateStar(3)">★</span>
+                    <span class="star" onclick="rateStar(4)">★</span>
+                    <span class="star" onclick="rateStar(5)">★</span>
+                  </div>
+                  <span class="rating-txt" id="rating-txt">—</span>
+                </div>
+                <div class="idea-actions">
+                  <button class="btn-sm danger" onclick="rejectIdea()">✕ Reject</button>
+                  <button class="btn-sm" id="approve-btn" onclick="approveIdea()">Generate post →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="state-draft" id="state-draft">
+            <div class="idle-card">
+              <div class="idle-icon" style="color:var(--green);opacity:1;">✓</div>
+              <h3>Post generated</h3>
+              <p>Your draft is ready to review and publish</p>
+              <button class="btn btn-green" onclick="openDraft()">View draft →</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ANALYTICS -->
       <div class="screen" id="screen-li-analytics">
-        <div class="page-header">
-          <div><h2>LinkedIn Analytics</h2><p>March 2026 · Performance report</p></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.14em;">Last updated: today 08:00</div>
+        <div class="page-hero">
+          <div><div class="page-hero-title">LinkedIn Analytics</div><div class="page-hero-sub">Performance report · from post history</div></div>
+          <div class="page-hero-right">Updated from your history</div>
         </div>
-        <div class="metrics-row">
-          <div class="metric-cell"><div class="mv">2,841</div><div class="ml">Followers</div><div class="md">+47 this month</div></div>
-          <div class="metric-cell"><div class="mv">18.4k</div><div class="ml">Impressions (30d)</div><div class="md">+22% vs prior period</div></div>
-          <div class="metric-cell"><div class="mv">4.2%</div><div class="ml">Avg engagement</div><div class="md">+0.8pp improvement</div></div>
-          <div class="metric-cell"><div class="mv">14</div><div class="ml">Posts published</div><div class="md">On schedule</div></div>
+        <div class="metrics-strip" id="analytics-strip">
+          <div class="metric"><div class="metric-v" id="an-posts">—</div><div class="metric-l">Posts published</div><div class="metric-d" id="an-posts-d">—</div></div>
+          <div class="metric"><div class="metric-v" id="an-impr">—</div><div class="metric-l">Total impressions</div><div class="metric-d">From post history</div></div>
+          <div class="metric"><div class="metric-v" id="an-rating">—</div><div class="metric-l">Avg daniel rating</div><div class="metric-d">Your subjective score</div></div>
+          <div class="metric"><div class="metric-v" id="an-streak">0</div><div class="metric-l">Current streak</div><div class="metric-d">30-day challenge</div></div>
         </div>
-        <div class="chart-block">
-          <div class="chart-head"><span class="chart-head-lbl">Impressions per post — last 14 posts</span><span class="chart-head-lbl">Peak: 1,204</span></div>
-          <div class="chart-body"><div class="bars" id="imp-chart"></div></div>
+        <div class="chart-area">
+          <div class="chart-area-head"><span class="ca-title">Impressions per post</span><span class="ca-note" id="an-peak">—</span></div>
+          <div class="big-bars" id="imp-chart"></div>
         </div>
-        <div class="two-charts">
-          <div>
-            <div class="chart-head"><span class="chart-head-lbl">Engagement rate per post</span></div>
-            <div class="chart-body"><div class="bars" id="eng-chart"></div></div>
-          </div>
-          <div>
-            <div class="chart-head"><span class="chart-head-lbl">Rating vs impressions</span></div>
-            <div class="chart-body">
-              <div class="corr-row"><div class="cl">Score 8–10</div><div class="ct"><div class="cf cf-h" style="width:85%"></div></div><div class="cv">1,200 avg</div></div>
-              <div class="corr-row"><div class="cl">Score 5–7</div><div class="ct"><div class="cf cf-m" style="width:52%"></div></div><div class="cv">680 avg</div></div>
-              <div class="corr-row"><div class="cl">Score 0–4</div><div class="ct"><div class="cf cf-l" style="width:24%"></div></div><div class="cv">290 avg</div></div>
+        <div class="two-col">
+          <div class="chart-area" style="border-bottom:1px solid var(--line);">
+            <div class="chart-area-head"><span class="ca-title">Rating vs impressions correlation</span></div>
+            <div style="margin-top:8px;" id="corr-section">
+              <div class="corr-item"><div class="ci-lbl">Score 8–10</div><div class="ci-track"><div class="ci-fill" id="corr-hi" style="width:0%"></div></div><div class="ci-num" id="corr-hi-n">—</div></div>
+              <div class="corr-item"><div class="ci-lbl">Score 5–7</div><div class="ci-track"><div class="ci-fill mid" id="corr-mid" style="width:0%"></div></div><div class="ci-num" id="corr-mid-n">—</div></div>
+              <div class="corr-item"><div class="ci-lbl">Score 0–4</div><div class="ci-track"><div class="ci-fill low" id="corr-lo" style="width:0%"></div></div><div class="ci-num" id="corr-lo-n">—</div></div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- POST IDEAS -->
-      <div class="screen" id="screen-li-ideas">
-        <div class="ideas-topbar">
-          <span class="run-tag">Run <strong>SAT 21 MAR</strong> · 3 ideas pending</span>
-          <div class="btn-row">
-            <button class="btn">Regenerate</button>
-            <button class="btn btn-solid">Approve all →</button>
-          </div>
-        </div>
-        <div id="ideas-list">
-          <div class="idea-row">
-            <div class="idea-numcol">1</div>
-            <div class="idea-content">
-              <div class="idea-title">Why most AI automation projects fail in week 3</div>
-              <div class="idea-tags"><span class="tag">Contrarian</span><span class="tag">Personal story</span><span class="tag">List format</span></div>
-              <div class="idea-hook">"I've watched AI automation projects die the same death 6 times now…"</div>
-              <div class="idea-source">Source — Berlin Automation Summit, 232 waitlisted · luma.com/berlin</div>
-            </div>
-            <div class="idea-actions">
-              <div><div class="stars-label">Rate this idea</div><div class="stars" data-card="0"><span class="star" onclick="rateStar(0,1)">★</span><span class="star" onclick="rateStar(0,2)">★</span><span class="star" onclick="rateStar(0,3)">★</span><span class="star" onclick="rateStar(0,4)">★</span><span class="star" onclick="rateStar(0,5)">★</span></div><div class="rval" id="rval-0">Not rated</div></div>
-              <div class="action-btns"><button class="btn-sm ghost" onclick="discard(this)">Discard</button><button class="btn-sm" id="abtn-0" onclick="approveIdea(0,this)">Approve →</button></div>
-            </div>
-          </div>
-          <div class="idea-row">
-            <div class="idea-numcol">2</div>
-            <div class="idea-content">
-              <div class="idea-title">232 people waitlisted for Berlin's Automation Summit: the 3 workflow patterns everyone is building</div>
-              <div class="idea-tags"><span class="tag">Tactical</span><span class="tag">Inside knowledge</span><span class="tag">Actionable</span></div>
-              <div class="idea-hook">"The Berlin Automation Summit had 232+ on the waitlist. I asked the organizers what everyone is actually building…"</div>
-              <div class="idea-source">Source — Needle event, Berlin Automation Summit · luma.com/berlin</div>
-            </div>
-            <div class="idea-actions">
-              <div><div class="stars-label">Rate this idea</div><div class="stars" data-card="1"><span class="star" onclick="rateStar(1,1)">★</span><span class="star" onclick="rateStar(1,2)">★</span><span class="star" onclick="rateStar(1,3)">★</span><span class="star" onclick="rateStar(1,4)">★</span><span class="star" onclick="rateStar(1,5)">★</span></div><div class="rval" id="rval-1">Not rated</div></div>
-              <div class="action-btns"><button class="btn-sm ghost" onclick="discard(this)">Discard</button><button class="btn-sm" id="abtn-1" onclick="approveIdea(1,this)">Approve →</button></div>
-            </div>
-          </div>
-          <div class="idea-row">
-            <div class="idea-numcol">3</div>
-            <div class="idea-content">
-              <div class="idea-title">Berlin's AI scene just showed us the future: why "AI for X" events are replacing generic tech meetups</div>
-              <div class="idea-tags"><span class="tag">Pattern recognition</span><span class="tag">Prediction</span><span class="tag">Positioning</span></div>
-              <div class="idea-hook">"Counted 8 AI events in Berlin this week. Zero were generic. Every one was 'AI for [something incredibly specific]'…"</div>
-              <div class="idea-source">Source — AI4Science, Merantix AI Campus, NLND DeepTech · luma.com/berlin</div>
-            </div>
-            <div class="idea-actions">
-              <div><div class="stars-label">Rate this idea</div><div class="stars" data-card="2"><span class="star" onclick="rateStar(2,1)">★</span><span class="star" onclick="rateStar(2,2)">★</span><span class="star" onclick="rateStar(2,3)">★</span><span class="star" onclick="rateStar(2,4)">★</span><span class="star" onclick="rateStar(2,5)">★</span></div><div class="rval" id="rval-2">Not rated</div></div>
-              <div class="action-btns"><button class="btn-sm ghost" onclick="discard(this)">Discard</button><button class="btn-sm" id="abtn-2" onclick="approveIdea(2,this)">Approve →</button></div>
-            </div>
+          <div class="chart-area" style="border-bottom:1px solid var(--line);">
+            <div class="chart-area-head"><span class="ca-title">Posts by category</span></div>
+            <div style="margin-top:8px;" id="cat-section"></div>
           </div>
         </div>
       </div>
 
       <!-- HISTORY -->
       <div class="screen" id="screen-li-history">
-        <div class="hist-header">
-          <div><h2>Post History</h2><p>14 posts published · avg score 6.8</p></div>
+        <div class="hist-head">
+          <div><h2>Post History</h2><p id="hist-summary">0 posts published</p></div>
         </div>
-        <div class="filter-strip">
-          <button class="filter-btn active" onclick="filterH('all',this)">All posts</button>
-          <button class="filter-btn" onclick="filterH('high',this)">Score 8+</button>
-          <button class="filter-btn" onclick="filterH('mid',this)">Score 5–7</button>
-          <button class="filter-btn" onclick="filterH('low',this)">Below 5</button>
+        <div class="filter-row">
+          <button class="filter-pill active" onclick="filterH('all',this)">All</button>
+          <button class="filter-pill" onclick="filterH('high',this)">Score 8+</button>
+          <button class="filter-pill" onclick="filterH('mid',this)">Score 5–7</button>
+          <button class="filter-pill" onclick="filterH('low',this)">Below 5</button>
         </div>
-        <div class="hist-thead">
-          <div>Title</div><div>Date</div><div>Impressions</div><div>Likes</div><div>Score</div><div>Status</div>
+        <div class="hist-table">
+          <div class="hist-thead"><div>Post</div><div>Date</div><div>Impressions</div><div>Likes</div><div>Score</div><div>Day</div></div>
+          <div id="hist-body"></div>
         </div>
-        <div id="history-body">
-          <div class="hist-row" data-score="9"><div class="ht">Why most AI automation projects fail in week 3</div><div class="hm">18 Mar</div><div class="hm">847</div><div class="hm">34</div><div class="hs hs-hi">9</div><div><span class="pill pill-live">Published</span></div></div>
-          <div class="hist-row" data-score="8"><div class="ht">3 things I wish I knew before building my first N8N workflow</div><div class="hm">14 Mar</div><div class="hm">1,204</div><div class="hm">51</div><div class="hs hs-hi">8</div><div><span class="pill pill-live">Published</span></div></div>
-          <div class="hist-row" data-score="7"><div class="ht">How I use Claude to do research in half the time</div><div class="hm">10 Mar</div><div class="hm">612</div><div class="hm">22</div><div class="hs hs-mi">7</div><div><span class="pill pill-live">Published</span></div></div>
-          <div class="hist-row" data-score="6"><div class="ht">The future of no-code automation</div><div class="hm">6 Mar</div><div class="hm">320</div><div class="hm">12</div><div class="hs hs-mi">6</div><div><span class="pill pill-live">Published</span></div></div>
-          <div class="hist-row" data-score="5"><div class="ht">Tools I use every day as a solo founder</div><div class="hm">2 Mar</div><div class="hm">290</div><div class="hm">9</div><div class="hs hs-mi">5</div><div><span class="pill pill-live">Published</span></div></div>
-          <div class="hist-row" data-score="3"><div class="ht">Thoughts on AI in 2026</div><div class="hm">26 Feb</div><div class="hm">178</div><div class="hm">4</div><div class="hs hs-lo">3</div><div><span class="pill pill-live">Published</span></div></div>
+      </div>
+
+      <!-- MY IDEAS BANK -->
+      <div class="screen" id="screen-li-ideas-bank">
+        <div class="ideas-bank-layout">
+          <div class="ideas-form-col">
+            <h2>My Ideas</h2>
+            <p class="sub">Dump a thought → saved to Google Sheets</p>
+            <div class="field"><label>Idea *</label><textarea id="f-idea" placeholder="Write your raw idea here — no need to polish it…"></textarea></div>
+            <div class="field">
+              <label>Category</label>
+              <select id="f-category">
+                <option value="">— pick one —</option>
+                <option value="apprenticeship">Apprenticeship</option>
+                <option value="ai_tools">AI Tools / Cursor</option>
+                <option value="berlin">Berlin Scene</option>
+                <option value="win">Win / Success</option>
+                <option value="fail">Fail / Lesson</option>
+                <option value="founder">Founder Story</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button class="submit-btn" id="submit-idea-btn" onclick="submitIdea()">+ Save idea to sheet</button>
+            <div class="form-status" id="form-status"></div>
+            <div style="margin-top:auto;padding-top:20px;font-family:var(--mono);font-size:8px;color:var(--ink3);line-height:1.8;border-top:1px solid var(--line);">
+              <strong style="color:var(--ink2);display:block;margin-bottom:4px;">SHEET COLUMNS</strong>
+              id · idea · category · status · added_on<br>
+              <span style="opacity:.6">Status defaults to <em>unused</em></span>
+            </div>
+          </div>
+          <div class="ideas-list-col">
+            <div class="ideas-list-head">
+              <h3>Added this session</h3>
+              <span id="ideas-count">0 ideas</span>
+            </div>
+            <div id="ideas-local-list"><div class="ideas-empty">No ideas yet<br><span style="font-size:8px;opacity:.5">Submit your first idea on the left</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="screen" id="screen-settings">
+        <div class="settings-layout">
+          <h2>Settings</h2>
+          <p class="sub">Configure your n8n webhook URLs and sheet connections</p>
+          <div class="settings-section">
+            <h3>N8N Webhooks</h3>
+            <div class="setting-row"><label>Trigger URL</label><input type="text" id="s-trigger" placeholder="https://meshminds.app.n8n.cloud/webhook/…" /></div>
+            <div class="setting-row"><label>Approve URL</label><input type="text" id="s-approve" placeholder="Resume URL + ?action=approve" /></div>
+            <div class="setting-row"><label>Reject URL</label><input type="text" id="s-reject" placeholder="Resume URL + ?action=reject" /></div>
+            <div class="setting-row"><label>Ideas sheet URL</label><input type="text" id="s-ideas-sheet" placeholder="Google Apps Script web app URL" /></div>
+          </div>
+          <div class="settings-section">
+            <h3>30-Day Challenge</h3>
+            <div class="setting-row"><label>Start date</label><input type="date" id="s-streak-start" /></div>
+          </div>
+          <div class="settings-section">
+            <h3>Post history (manual import)</h3>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);line-height:1.8;margin-bottom:12px;">
+              Paste post history JSON below to populate analytics and history views.<br>
+              Format: array of objects with keys: title, date, post_text, category, daniel_rating, impressions, comments, day_number
+            </div>
+            <textarea id="s-history-json" style="width:100%;font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:10px;height:120px;outline:none;resize:vertical;" placeholder='[{"title":"My first Cursor post","date":"21.03.26","post_text":"...","category":"ai_tools","daniel_rating":8,"impressions":420,"comments":12,"day_number":1}]'></textarea>
+          </div>
+          <button class="save-settings" onclick="saveSettings()">Save settings</button>
         </div>
       </div>
 
@@ -470,163 +660,576 @@ a { text-decoration: none; color: inherit; }
   </main>
 </div>
 
+<!-- DRAFT OVERLAY -->
+<div class="overlay hidden" id="draft-overlay" onclick="closeDraftOutside(event)">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <h3>Generated Post</h3>
+      <div class="overlay-head-right">
+        <span style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;">Click text to edit</span>
+        <button class="overlay-close" onclick="closeDraft()">✕ Close</button>
+      </div>
+    </div>
+    <div class="overlay-body">
+      <div class="post-text" id="draft-text" contenteditable="true">Loading draft...</div>
+      <div class="post-meta">
+        <div class="pm"><strong id="draft-chars">0</strong> chars</div>
+        <div class="pm"><strong id="draft-words">0</strong> words</div>
+        <div class="pm">Generated <strong id="draft-time"></strong></div>
+      </div>
+    </div>
+    <div class="overlay-foot">
+      <div class="overlay-foot-left">
+        <button class="btn" onclick="closeDraft()">Close</button>
+        <button class="btn" onclick="requestRewrite()">↺ Rewrite</button>
+      </div>
+      <div class="overlay-foot-right">
+        <button class="btn btn-primary" onclick="copyPost()">Copy to clipboard</button>
+        <button class="btn btn-green" onclick="markPublished()">Mark as published ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RATING OVERLAY -->
+<div class="rating-overlay hidden" id="rating-overlay">
+  <div class="rating-box">
+    <div class="rating-box-head"><h3>Rate this post</h3></div>
+    <div class="rating-box-body">
+      <p>How good was this post? (0–10 scale via stars)</p>
+      <div class="big-stars" id="big-stars">
+        <span class="big-star" onclick="ratePost(2)">★</span>
+        <span class="big-star" onclick="ratePost(4)">★</span>
+        <span class="big-star" onclick="ratePost(6)">★</span>
+        <span class="big-star" onclick="ratePost(8)">★</span>
+        <span class="big-star" onclick="ratePost(10)">★</span>
+      </div>
+      <textarea class="rating-notes" id="rating-notes" placeholder="Optional notes — what made this post work or not work?"></textarea>
+    </div>
+    <div class="rating-box-foot">
+      <button class="btn" onclick="skipRating()">Skip</button>
+      <button class="btn btn-green" onclick="saveRating()">Save rating</button>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATING OVERLAY -->
+<div class="gen-overlay hidden" id="gen-overlay">
+  <div class="gen-box">
+    <h3>Generating</h3>
+    <p>Writing your LinkedIn post…</p>
+    <div class="loader"><div class="l-dot"></div><div class="l-dot"></div><div class="l-dot"></div></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const N8N_BASE = 'https://meshminds.app.n8n.cloud/webhook';
-const FETCH_IDEAS_URL = N8N_BASE + '/fetch-ideas';
-const FETCH_DRAFT_URL = N8N_BASE + '/fetch-draft';
-
-const ratings = {};
-let currentIdea = null;
-let currentDraft = null;
-
-const pages = {
-  'overview':     { title: 'Overview',           crumb: 'Workspace' },
-  'li-analytics': { title: 'LinkedIn Analytics', crumb: 'LinkedIn' },
-  'li-ideas':     { title: 'Post Ideas',         crumb: 'LinkedIn' },
-  'li-history':   { title: 'Post History',       crumb: 'LinkedIn' },
+// ── CONFIG ──
+let CFG = {
+  triggerUrl: '',
+  approveUrl: '',
+  rejectUrl: '',
+  ideasSheetUrl: '',
+  streakStart: null,
 };
 
+// ── STATE ──
+let currentRating = 0;
+let currentIdea = null;
+let currentDraft = null;
+let postRating = 0;
+let postHistory = [];
+let localIdeas = [];
+
+const pages = {
+  'overview':       { root: 'Workspace', page: 'Overview' },
+  'li-run':         { root: 'LinkedIn',  page: 'Run Workflow' },
+  'li-ideas-bank':  { root: 'LinkedIn',  page: 'My Ideas' },
+  'li-analytics':   { root: 'LinkedIn',  page: 'Analytics' },
+  'li-history':     { root: 'LinkedIn',  page: 'History' },
+  'settings':       { root: 'System',    page: 'Settings' },
+};
+
+// ── INIT ──
+function init() {
+  document.getElementById('today-date').textContent =
+    new Date().toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  loadSettings();
+  loadHistory();
+  buildStreakGrid();
+  buildSparkline('followers-spark', [820,840,860,875,890,910,925,940,960,975,990,1005,1020,1040]);
+  buildSparkline('impressions-spark', [280,320,410,380,500,450,620,580,710,680,750,820,790,900]);
+}
+
+// ── SETTINGS ──
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('daemien_cfg') || '{}');
+    Object.assign(CFG, s);
+    document.getElementById('s-trigger').value = CFG.triggerUrl || '';
+    document.getElementById('s-approve').value = CFG.approveUrl || '';
+    document.getElementById('s-reject').value = CFG.rejectUrl || '';
+    document.getElementById('s-ideas-sheet').value = CFG.ideasSheetUrl || '';
+    if (CFG.streakStart) document.getElementById('s-streak-start').value = CFG.streakStart;
+  } catch(e) {}
+}
+
+function saveSettings() {
+  CFG.triggerUrl = document.getElementById('s-trigger').value.trim();
+  CFG.approveUrl = document.getElementById('s-approve').value.trim();
+  CFG.rejectUrl = document.getElementById('s-reject').value.trim();
+  CFG.ideasSheetUrl = document.getElementById('s-ideas-sheet').value.trim();
+  CFG.streakStart = document.getElementById('s-streak-start').value;
+  try {
+    const histJson = document.getElementById('s-history-json').value.trim();
+    if (histJson) {
+      const parsed = JSON.parse(histJson);
+      if (Array.isArray(parsed)) { postHistory = parsed; saveHistory(); }
+    }
+  } catch(e) { toast('Invalid JSON in history field'); return; }
+  localStorage.setItem('daemien_cfg', JSON.stringify(CFG));
+  buildStreakGrid();
+  refreshAnalytics();
+  refreshHistory();
+  toast('Settings saved ✓');
+}
+
+// ── HISTORY persistence ──
+function saveHistory() { localStorage.setItem('daemien_history', JSON.stringify(postHistory)); }
+function loadHistory() {
+  try { postHistory = JSON.parse(localStorage.getItem('daemien_history') || '[]'); } catch(e) { postHistory = []; }
+  refreshAnalytics();
+  refreshHistory();
+}
+
+// ── NAV ──
 function nav(id, btn) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
   const p = pages[id];
   if (p) {
-    document.getElementById('page-title').textContent = p.title;
-    document.getElementById('page-crumb').textContent = p.crumb;
+    document.getElementById('crumb-root').textContent = p.root;
+    document.getElementById('crumb-page').textContent = p.page;
   }
-  if (id === 'li-ideas') loadIdea();
 }
 
-async function loadIdea() {
-  const list = document.getElementById('ideas-list');
-  list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;">Loading idea from N8N...</div>';
-
-  try {
-    const res = await fetch(FETCH_IDEAS_URL);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const idea = await res.json();
-
-    if (!idea || !idea.title) {
-      list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;">No pending idea. Next run at 08:00.</div>';
-      return;
+// ── STREAK GRID ──
+function buildStreakGrid() {
+  const grid = document.getElementById('streak-grid');
+  grid.innerHTML = '';
+  const start = CFG.streakStart ? new Date(CFG.streakStart) : null;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let currentDay = 0;
+  for (let i = 1; i <= 30; i++) {
+    const div = document.createElement('div');
+    div.className = 'streak-day';
+    let state = 'future';
+    let label = i;
+    if (start) {
+      const dayDate = new Date(start);
+      dayDate.setDate(start.getDate() + i - 1);
+      dayDate.setHours(0,0,0,0);
+      if (dayDate < today) {
+        const hasPost = postHistory.some(p => p.day_number == i);
+        state = hasPost ? 'done' : 'skipped';
+      } else if (dayDate.getTime() === today.getTime()) {
+        state = 'today';
+        currentDay = i;
+      }
     }
-
-    currentIdea = idea;
-
-    document.querySelector('.run-tag').innerHTML = 'Pending idea <strong>·</strong> ' + new Date().toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'});
-
-    list.innerHTML = `
-      <div class="idea-row">
-        <div class="idea-numcol">1</div>
-        <div class="idea-content">
-          <div class="idea-title">${escHtml(idea.title)}</div>
-          <div class="idea-tags">
-            ${idea.angle ? '<span class="tag">' + escHtml(idea.angle) + '</span>' : ''}
-            ${idea.why ? '<span class="tag">' + escHtml(idea.why.substring(0,40)) + '</span>' : ''}
-          </div>
-          <div class="idea-hook">"${escHtml(idea.hook)}"</div>
-          ${idea.source ? '<div class="idea-source">Source — ' + escHtml(idea.source) + '</div>' : ''}
-        </div>
-        <div class="idea-actions">
-          <div>
-            <div class="stars-label">Rate this idea</div>
-            <div class="stars" data-card="0">
-              <span class="star" onclick="rateStar(0,1)">★</span>
-              <span class="star" onclick="rateStar(0,2)">★</span>
-              <span class="star" onclick="rateStar(0,3)">★</span>
-              <span class="star" onclick="rateStar(0,4)">★</span>
-              <span class="star" onclick="rateStar(0,5)">★</span>
-            </div>
-            <div class="rval" id="rval-0">Not rated</div>
-          </div>
-          <div class="action-btns">
-            <button class="btn-sm ghost" onclick="discardIdea(this)">Discard</button>
-            <button class="btn-sm" id="abtn-0" onclick="approveIdea(0, this)">Approve →</button>
-          </div>
-        </div>
-      </div>`;
-
-  } catch(e) {
-    list.innerHTML = '<div style="padding:24px 22px;font-family:var(--mono);font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.12em;">Could not load idea — check N8N webhook · ' + e.message + '</div>';
+    div.classList.add(state);
+    div.textContent = i;
+    const tt = document.createElement('div');
+    tt.className = 'streak-tooltip';
+    const ph = postHistory.find(p => p.day_number == i);
+    tt.textContent = ph ? ph.title : (state === 'skipped' ? 'No post' : 'Day ' + i);
+    div.appendChild(tt);
+    grid.appendChild(div);
   }
+  document.getElementById('streak-label').textContent =
+    currentDay > 0 ? `Day ${currentDay} / 30` : (start ? 'Challenge active' : 'Set start date in Settings');
+  document.getElementById('an-streak').textContent = currentDay || 0;
 }
 
-function escHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── ANALYTICS ──
+function refreshAnalytics() {
+  const total = postHistory.length;
+  const totalImpр = postHistory.reduce((a,p) => a + (parseInt(p.impressions)||0), 0);
+  const rated = postHistory.filter(p => p.daniel_rating);
+  const avgRating = rated.length ? (rated.reduce((a,p) => a + parseFloat(p.daniel_rating), 0) / rated.length).toFixed(1) : '—';
+  document.getElementById('ov-posts').textContent = total;
+  document.getElementById('ov-posts-note').textContent = total > 0 ? `${total} total` : '—';
+  document.getElementById('ov-rating').textContent = avgRating;
+  document.getElementById('ov-impressions').textContent = totalImpр > 0 ? (totalImpр > 999 ? (totalImpр/1000).toFixed(1)+'k' : totalImpр) : '—';
+  document.getElementById('an-posts').textContent = total;
+  document.getElementById('an-posts-d').textContent = total > 0 ? `${total} published` : '—';
+  document.getElementById('an-impr').textContent = totalImpр > 999 ? (totalImpр/1000).toFixed(1)+'k' : (totalImpр || '—');
+  document.getElementById('an-rating').textContent = avgRating;
+  document.getElementById('flow-posts').textContent = total || '—';
+  document.getElementById('flow-score').textContent = avgRating;
+  // impressions chart
+  const last14 = postHistory.slice(-14);
+  const impChart = document.getElementById('imp-chart');
+  if (last14.length > 0) {
+    const max = Math.max(...last14.map(p => parseInt(p.impressions)||0));
+    document.getElementById('an-peak').textContent = max > 0 ? `Peak ${max.toLocaleString()}` : '—';
+    impChart.innerHTML = last14.map(p => {
+      const v = parseInt(p.impressions) || 0;
+      const h = max > 0 ? Math.round((v/max)*64)+8 : 8;
+      const hi = v === max ? 'hi' : '';
+      const lbl = p.date ? p.date.substring(0,5) : (p.day_number ? 'D'+p.day_number : '');
+      return `<div class="bb"><div class="bb-bar ${hi}" style="height:${h}px" title="${v}"></div><div class="bb-lbl">${lbl}</div></div>`;
+    }).join('');
+  } else {
+    impChart.innerHTML = '<div style="font-family:var(--mono);font-size:9px;color:var(--ink3);padding:20px;">No posts yet — data appears after first post</div>';
+  }
+  // correlation
+  const hi = postHistory.filter(p => p.daniel_rating >= 8);
+  const mid = postHistory.filter(p => p.daniel_rating >= 5 && p.daniel_rating < 8);
+  const lo = postHistory.filter(p => p.daniel_rating < 5 && p.daniel_rating !== undefined && p.daniel_rating !== '');
+  const avg = arr => arr.length ? Math.round(arr.reduce((a,p) => a + (parseInt(p.impressions)||0), 0) / arr.length) : 0;
+  const hiAvg = avg(hi), midAvg = avg(mid), loAvg = avg(lo);
+  const corrMax = Math.max(hiAvg, midAvg, loAvg, 1);
+  document.getElementById('corr-hi').style.width = Math.round((hiAvg/corrMax)*100)+'%';
+  document.getElementById('corr-mid').style.width = Math.round((midAvg/corrMax)*100)+'%';
+  document.getElementById('corr-lo').style.width = Math.round((loAvg/corrMax)*100)+'%';
+  document.getElementById('corr-hi-n').textContent = hiAvg > 0 ? hiAvg+' avg' : '—';
+  document.getElementById('corr-mid-n').textContent = midAvg > 0 ? midAvg+' avg' : '—';
+  document.getElementById('corr-lo-n').textContent = loAvg > 0 ? loAvg+' avg' : '—';
+  // categories
+  const cats = {};
+  postHistory.forEach(p => { if (p.category) cats[p.category] = (cats[p.category]||0)+1; });
+  const catEl = document.getElementById('cat-section');
+  const catMax = Math.max(...Object.values(cats), 1);
+  catEl.innerHTML = Object.entries(cats).sort((a,b) => b[1]-a[1]).map(([k,v]) =>
+    `<div class="corr-item"><div class="ci-lbl">${k}</div><div class="ci-track"><div class="ci-fill" style="width:${Math.round((v/catMax)*100)}%"></div></div><div class="ci-num">${v} post${v>1?'s':''}</div></div>`
+  ).join('') || '<div style="font-family:var(--mono);font-size:9px;color:var(--ink3);padding:8px 0;">No data yet</div>';
 }
 
-function rateStar(card, val) {
-  ratings[card] = val;
-  document.querySelectorAll(`.stars[data-card="${card}"] .star`).forEach((s,i) => s.classList.toggle('lit', i < val));
-  document.getElementById('rval-' + card).textContent = val + ' / 5';
-}
-
-async function approveIdea(idx, btn) {
-  if (!currentIdea || !currentIdea.resume_url) {
-    toast('No resume URL — run the workflow first');
+// ── HISTORY TABLE ──
+function refreshHistory() {
+  const body = document.getElementById('hist-body');
+  document.getElementById('hist-summary').textContent =
+    `${postHistory.length} post${postHistory.length !== 1 ? 's' : ''} published`;
+  if (postHistory.length === 0) {
+    body.innerHTML = '<div style="padding:28px;font-family:var(--mono);font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;">No posts yet — publish your first post to see history</div>';
     return;
   }
-
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
-  try {
-    await fetch(currentIdea.resume_url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        approved: true,
-        rating: ratings[idx] || 0,
-        ts: new Date().toISOString()
-      })
-    });
-    btn.textContent = 'Approved ✓';
-    btn.classList.add('approved');
-    toast('Approved — content generator is now running');
-  } catch(e) {
-    btn.textContent = 'Approve →';
-    btn.disabled = false;
-    toast('Error: ' + e.message);
-  }
-}
-
-function discardIdea(btn) {
-  btn.closest('.idea-row').style.opacity = '0.3';
-  btn.closest('.idea-row').style.pointerEvents = 'none';
-  toast('Idea discarded — next run tomorrow at 08:00');
+  body.innerHTML = [...postHistory].reverse().map(p => {
+    const score = parseFloat(p.daniel_rating);
+    const cls = score >= 8 ? 'score-hi' : score >= 5 ? 'score-mid' : 'score-lo';
+    const scoreStr = p.daniel_rating !== undefined && p.daniel_rating !== '' ? score : '—';
+    const impr = p.impressions || '—';
+    const cmts = p.comments || '—';
+    return `<div class="hist-row" data-score="${score||0}" onclick="openHistPost(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="ht">${esc(p.title || p.post_text?.substring(0,60) || '—')}</div>
+      <div class="hm">${p.date||'—'}</div>
+      <div class="hm">${impr}</div>
+      <div class="hm">${cmts}</div>
+      <div class="score-num ${cls}">${scoreStr}</div>
+      <div class="hm">${p.day_number ? 'Day '+p.day_number : '—'}</div>
+    </div>`;
+  }).join('');
 }
 
 function filterH(type, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.hist-row').forEach(r => {
-    const s = parseInt(r.dataset.score);
+  document.querySelectorAll('#hist-body .hist-row').forEach(r => {
+    const s = parseFloat(r.dataset.score);
     const hide = (type==='high'&&s<8)||(type==='mid'&&(s<5||s>=8))||(type==='low'&&s>=5);
     r.style.display = hide ? 'none' : '';
   });
 }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+function openHistPost(p) {
+  currentDraft = p.post_text || '';
+  openDraft();
 }
 
+// ── WORKFLOW ──
+function showState(s) {
+  ['idle','running','idea','draft'].forEach(x => {
+    document.getElementById('state-'+x).classList.toggle('vis', x === s);
+  });
+}
+
+function resetWorkflow() {
+  currentRating = 0; currentIdea = null; currentDraft = null;
+  showState('idle');
+  document.getElementById('run-btn').disabled = false;
+  document.getElementById('run-btn').textContent = '▶ Run now';
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+  document.getElementById('rating-txt').textContent = '—';
+  document.getElementById('approve-btn').textContent = 'Generate post →';
+  document.getElementById('approve-btn').disabled = false;
+  for (let i=0;i<4;i++) {
+    const el = document.getElementById('pstep-'+i);
+    el.classList.remove('done','active');
+    if (i===0) el.classList.add('active');
+  }
+}
+
+async function startWorkflow() {
+  document.getElementById('run-btn').disabled = true;
+  showState('running');
+  for (let i = 0; i < 4; i++) {
+    await delay(900);
+    document.getElementById('pstep-'+i).classList.add('done');
+    document.getElementById('pstep-'+i).classList.remove('active');
+    if (i+1 < 4) document.getElementById('pstep-'+(i+1)).classList.add('active');
+  }
+  if (CFG.triggerUrl) {
+    try {
+      const res = await fetch(CFG.triggerUrl);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.title) { currentIdea = data; populateIdea(data); showState('idea'); document.getElementById('pending-badge').style.display=''; return; }
+      }
+    } catch(e) {}
+  }
+  // demo fallback
+  currentIdea = {
+    title: "Vor einer Woche hätte ich dir nicht gesagt, dass ich eine Website mit Claude bauen kann",
+    hook: "Ich hatte Angst vor dem Terminal. Heute habe ich eine funktionierende Website mit LLM-Integration gebaut — in einer Woche, ohne eine Zeile Code zu schreiben.",
+    angle: "Beginner journal",
+    source: "Persönliche Erfahrung mit Cursor",
+    why: "Passt perfekt zum 30-Tage-Challenge-Thema. Ehrliche Anfänger-Perspektive die kein AI-Experte schreiben kann.",
+    resume_url: null,
+  };
+  populateIdea(currentIdea);
+  showState('idea');
+  document.getElementById('pending-badge').style.display='';
+}
+
+function populateIdea(idea) {
+  document.getElementById('idea-title').textContent = idea.title || '';
+  document.getElementById('idea-hook').textContent = '"' + (idea.hook || '') + '"';
+  document.getElementById('idea-why').textContent = idea.why || '';
+  document.getElementById('idea-source').textContent = idea.source ? 'Quelle — ' + idea.source : '';
+  document.getElementById('idea-date-lbl').textContent = new Date().toLocaleDateString('de-DE', {weekday:'short',day:'numeric',month:'short'});
+  const tagsEl = document.getElementById('idea-tags');
+  tagsEl.innerHTML = '';
+  if (idea.angle) tagsEl.innerHTML += `<span class="tag">${esc(idea.angle)}</span>`;
+}
+
+function rateStar(val) {
+  currentRating = val;
+  document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('lit', i < val));
+  document.getElementById('rating-txt').textContent = val + ' / 5';
+}
+
+async function rejectIdea() {
+  if (CFG.rejectUrl && currentIdea?.resume_url) {
+    try { await fetch(currentIdea.resume_url + '?action=reject'); } catch(e) {}
+  }
+  document.getElementById('pending-badge').style.display = 'none';
+  toast('Idea rejected — idea bank updated');
+  resetWorkflow();
+}
+
+async function approveIdea() {
+  const btn = document.getElementById('approve-btn');
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+  if (currentIdea?.resume_url) {
+    try { await fetch(currentIdea.resume_url + '?action=approve', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ approved: true, rating: currentRating }) }); } catch(e) {}
+  }
+  document.getElementById('gen-overlay').classList.remove('hidden');
+  await delay(2800);
+  document.getElementById('gen-overlay').classList.add('hidden');
+  currentDraft = generateDemoDraft(currentIdea);
+  document.getElementById('pending-badge').style.display = 'none';
+  showState('draft');
+  toast('Post generated ✓');
+}
+
+function generateDemoDraft(idea) {
+  return `Vor einer Woche hätte ich dir nicht gesagt, dass ich eine Website mit LLM-Integration bauen kann.
+
+Ich hatte Angst vor dem Terminal. Ich hatte noch nie eine Zeile Code geschrieben. Mit 3-4 Stunden Cursor-Lernen hat es trotzdem geklappt.
+
+Wie?
+
+Ich frage Claude bei jedem Schritt. Nicht "schreib mir den Code" — sondern "erkläre mir was dieser Code macht, dann schreib ihn".
+
+Der Unterschied: Ich verstehe was passiert. Ich kann Fehler finden. Ich lerne dabei.
+
+Was ich gebaut habe: Eine Website die automatisch Berechnungen macht, die Claude API connected, und ein LLM als Backend nutzt. In einer Woche. Ohne Vorkenntnisse.
+
+Die Frage die mich seither beschäftigt: Wie entwickelt sich die Software-Wirtschaft weiter, wenn Building so zugänglich wird?
+
+Werden Menschen noch für Apps zahlen? Wahrscheinlich nicht für einfache. Aber für gute Lösungen komplexer Probleme — ja.
+
+Was denkst du? Baut du selbst mit KI-Tools?`;
+}
+
+function openDraft() {
+  const text = currentDraft || '';
+  const el = document.getElementById('draft-text');
+  el.textContent = text;
+  updateDraftMeta();
+  document.getElementById('draft-time').textContent = new Date().toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('draft-overlay').classList.remove('hidden');
+  el.addEventListener('input', updateDraftMeta);
+}
+
+function updateDraftMeta() {
+  const text = document.getElementById('draft-text').textContent;
+  document.getElementById('draft-chars').textContent = text.length.toLocaleString();
+  document.getElementById('draft-words').textContent = text.split(/\s+/).filter(Boolean).length;
+}
+
+function closeDraft() { document.getElementById('draft-overlay').classList.add('hidden'); }
+function closeDraftOutside(e) { if (e.target === document.getElementById('draft-overlay')) closeDraft(); }
+
+function copyPost() {
+  const text = document.getElementById('draft-text').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard ✓'));
+}
+
+async function requestRewrite() {
+  document.getElementById('gen-overlay').classList.remove('hidden');
+  await delay(2200);
+  document.getElementById('gen-overlay').classList.add('hidden');
+  toast('Rewrite complete — same idea, new draft');
+}
+
+function markPublished() {
+  closeDraft();
+  document.getElementById('rating-overlay').classList.remove('hidden');
+}
+
+// ── POST RATING ──
+function ratePost(val) {
+  postRating = val;
+  const stars = document.querySelectorAll('.big-star');
+  const filled = Math.round(val / 2);
+  stars.forEach((s,i) => s.classList.toggle('lit', i < filled));
+}
+
+function skipRating() {
+  document.getElementById('rating-overlay').classList.add('hidden');
+  finalizePost(null, '');
+}
+
+function saveRating() {
+  const notes = document.getElementById('rating-notes').value;
+  document.getElementById('rating-overlay').classList.add('hidden');
+  finalizePost(postRating, notes);
+  postRating = 0;
+  document.querySelectorAll('.big-star').forEach(s => s.classList.remove('lit'));
+  document.getElementById('rating-notes').value = '';
+}
+
+function finalizePost(rating, notes) {
+  const post = {
+    title: currentIdea?.title || 'Post ' + (postHistory.length + 1),
+    date: new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'2-digit'}),
+    post_text: document.getElementById('draft-text').textContent,
+    category: currentIdea?.angle || 'other',
+    daniel_rating: rating,
+    impressions: '',
+    comments: '',
+    notes: notes,
+    day_number: postHistory.length + 1,
+  };
+  postHistory.push(post);
+  saveHistory();
+  refreshAnalytics();
+  refreshHistory();
+  buildStreakGrid();
+  resetWorkflow();
+  toast('Post saved to history 🚀');
+}
+
+// ── IDEAS BANK ──
+function submitIdea() {
+  const idea = document.getElementById('f-idea').value.trim();
+  const category = document.getElementById('f-category').value || 'other';
+  const statusEl = document.getElementById('form-status');
+  const btn = document.getElementById('submit-idea-btn');
+  if (!idea) { statusEl.textContent = '✕ Idea field is required'; statusEl.className = 'form-status err'; return; }
+  const row = { idea, category, status: 'unused', added_on: new Date().toISOString().split('T')[0] };
+  btn.disabled = true; btn.textContent = 'Saving…'; statusEl.className = 'form-status';
+  const doSave = async () => {
+    if (CFG.ideasSheetUrl) {
+      const res = await fetch(CFG.ideasSheetUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(row) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+    } else { await delay(300); }
+  };
+  doSave().then(() => {
+    addLocalIdea(row);
+    document.getElementById('f-idea').value = '';
+    document.getElementById('f-category').value = '';
+    statusEl.textContent = CFG.ideasSheetUrl ? '✓ Saved to Google Sheets' : '✓ Saved locally (no sheet URL set in Settings)';
+    statusEl.className = 'form-status ok';
+    toast(CFG.ideasSheetUrl ? 'Idea saved to sheet ✓' : 'Idea saved locally ✓');
+  }).catch(err => {
+    statusEl.textContent = '✕ Could not save — ' + err.message;
+    statusEl.className = 'form-status err';
+  }).finally(() => { btn.disabled = false; btn.textContent = '+ Save idea to sheet'; });
+}
+
+function addLocalIdea(row) {
+  localIdeas.unshift(row);
+  const list = document.getElementById('ideas-local-list');
+  const empty = list.querySelector('.ideas-empty');
+  if (empty) empty.remove();
+  const el = document.createElement('div');
+  el.className = 'idea-item';
+  el.innerHTML = `<div class="idea-item-top"><div class="idea-item-text">${esc(row.idea)}</div></div>
+    <div class="idea-item-meta">
+      ${row.category ? `<span class="idea-cat">${esc(row.category)}</span>` : ''}
+      <span class="idea-status-pill sp-unused">unused</span>
+      <span class="idea-item-date">${row.added_on}</span>
+    </div>`;
+  list.prepend(el);
+  document.getElementById('ideas-count').textContent = localIdeas.length + ' idea' + (localIdeas.length === 1 ? '' : 's');
+}
+
+// ── CHARTS ──
 function buildBars(id, data) {
   const el = document.getElementById(id);
   if (!el) return;
-  const max = Math.max(...data.map(d => d.v));
-  el.innerHTML = data.map(d => `<div class="bc"><div class="bar${d.hi?' hi':''}" style="height:${Math.round((d.v/max)*56)+6}px"></div><div class="bl">${d.l}</div></div>`).join('');
+  const max = Math.max(...data.map(d=>d.v));
+  el.innerHTML = data.map(d => {
+    const h = Math.round((d.v/max)*64)+8;
+    return `<div class="bb"><div class="bb-bar ${d.hi?'hi':''}" style="height:${h}px"></div><div class="bb-lbl">${d.l}</div></div>`;
+  }).join('');
 }
 
-buildBars('imp-chart',[{v:290,l:'F26'},{v:178,l:'F28'},{v:320,l:'M2'},{v:410,l:'M4'},{v:290,l:'M6'},{v:380,l:'M8'},{v:612,l:'M10'},{v:520,l:'M12'},{v:490,l:'M14'},{v:847,l:'M18',hi:true},{v:720,l:'M19'},{v:610,l:'M20'},{v:1204,l:'M21',hi:true},{v:890,l:'M22'}]);
-buildBars('eng-chart',[{v:2.1,l:'F26'},{v:1.8,l:'F28'},{v:2.4,l:'M2'},{v:3.1,l:'M4'},{v:2.8,l:'M6'},{v:3.4,l:'M8'},{v:4.1,l:'M10'},{v:3.8,l:'M12'},{v:3.6,l:'M14'},{v:5.2,l:'M18',hi:true},{v:4.8,l:'M19'},{v:4.1,l:'M20'},{v:6.1,l:'M21',hi:true},{v:5.3,l:'M22'}]);
+function buildSparkline(id, data) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const max = Math.max(...data);
+  el.innerHTML = data.map((v,i) => {
+    const h = Math.max(6, Math.round((v/max)*44));
+    return `<div class="sp-bar ${i===data.length-1?'dark':'mid'}" style="height:${h}px"></div>`;
+  }).join('');
+}
+
+// ── UTILS ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeDraft();
+    document.getElementById('rating-overlay').classList.add('hidden');
+  }
+});
+
+init();
 </script>
 </body>
 </html>
