@@ -1020,7 +1020,9 @@ async function startAuto() {
     if (next) next.classList.add('active');
   }
   try {
-    const res = await fetch('https://meshminds.app.n8n.cloud/webhook/autom-trigger');
+    const res = await fetch('https://meshminds.app.n8n.cloud/webhook/autom-trigger', {
+      method: 'GET',
+    });
     if (!res.ok) throw new Error('n8n returned ' + res.status);
     const data = await res.json();
     if (data && data.title) {
