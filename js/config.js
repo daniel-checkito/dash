@@ -5,6 +5,10 @@ export const CFG = {
   rejectUrl: '',
   ideasSheetUrl: '',
   streakStart: null,
+  /** Daily post deadline (wall clock in `postDeadlineTimezone`) */
+  postDeadlineHour: 18,
+  postDeadlineMinute: 0,
+  postDeadlineTimezone: 'Europe/Berlin',
 };
 
 export const pages = {

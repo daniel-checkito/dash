@@ -1,6 +1,46 @@
 import { CFG } from './config.js';
 import { initRouting } from './router.js';
 
+/** UTC ms for a wall-clock time in `timeZone` (e.g. Europe/Berlin 18:00). */
+function wallTimeToUTC(year, month, day, hour, minute, timeZone) {
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
+  });
+  const start = Date.UTC(year, month - 1, day, 0, 0, 0) - 4 * 3600000;
+  const end = start + 30 * 3600000;
+  for (let t = start; t < end; t += 60000) {
+    const parts = fmt.formatToParts(new Date(t));
+    const get = (type) => {
+      const p = parts.find(p => p.type === type);
+      return p ? +p.value : NaN;
+    };
+    if (get('year') === year && get('month') === month && get('day') === day &&
+        get('hour') === hour && get('minute') === minute) return t;
+  }
+  return Date.UTC(year, month - 1, day, hour - 1, minute, 0);
+}
+
+function ymdInTZ(date, timeZone) {
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: 'numeric', day: 'numeric' });
+  const parts = fmt.formatToParts(date);
+  const get = (type) => +parts.find(p => p.type === type).value;
+  return { year: get('year'), month: get('month'), day: get('day') };
+}
+
+function nextCalendarYMD(y, m, d) {
+  const t = new Date(Date.UTC(y, m - 1, d + 1));
+  return { year: t.getUTCFullYear(), month: t.getUTCMonth() + 1, day: t.getUTCDate() };
+}
+
+function formatPostDateDE(date, timeZone) {
+  return new Date(date).toLocaleDateString('de-DE', {
+    timeZone: timeZone,
+    day: '2-digit', month: '2-digit', year: '2-digit'
+  });
+}
+
 // ── STATE ──
 let currentRating = 0;
 let currentIdea = null;
@@ -10,14 +50,14 @@ let localIdeas = [];
 
 // ── INIT ──
 function init() {
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
   loadSettings();
+  const tz = CFG.postDeadlineTimezone || 'Europe/Berlin';
+  document.getElementById('today-date').textContent =
+    new Date().toLocaleDateString('en-GB', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   loadHistory();
-  buildStreakGrid();
   startPostingTimer();
+  buildStreakGrid();
   initFocusTimer();
-  updateTimer();
   initRouting();
 }
 
@@ -426,7 +466,7 @@ function markPublished() {
 function finalizePost(rating, notes) {
   const post = {
     title: currentIdea?.title || 'Post ' + (postHistory.length + 1),
-    date: new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'2-digit'}),
+    date: formatPostDateDE(new Date(), CFG.postDeadlineTimezone || 'Europe/Berlin'),
     post_text: document.getElementById('draft-text').textContent,
     category: currentIdea?.angle || 'other',
     daniel_rating: rating,
@@ -602,16 +642,26 @@ function updateTimer() {
   const flowPostsEl = document.getElementById('flow-posts');
   const flowLastEl = document.getElementById('flow-last-run');
 
+  const tz = CFG.postDeadlineTimezone || 'Europe/Berlin';
+  const dh = CFG.postDeadlineHour ?? 18;
+  const dm = CFG.postDeadlineMinute ?? 0;
+  const dl = `${String(dh).padStart(2, '0')}:${String(dm).padStart(2, '0')}`;
+
   const last = postHistory.length > 0
     ? postHistory.reduce((a, b) => (a.date > b.date ? a : b))
     : null;
 
   const now = new Date();
-  const todayStart = new Date(now); todayStart.setHours(0,0,0,0);
-  const endOfDay = new Date(todayStart); endOfDay.setDate(todayStart.getDate() + 1);
-  const todayStr = now.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'2-digit'});
-  const todayISO = now.toISOString().split('T')[0];
+  const { year, month, day } = ymdInTZ(now, tz);
+  const todayStr = formatPostDateDE(now, tz);
+  const todayISO = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   const postedToday = last && (last.date === todayStr || last.date === todayISO);
+
+  const deadlineMs = wallTimeToUTC(year, month, day, dh, dm, tz);
+  const startMs = wallTimeToUTC(year, month, day, 0, 0, tz);
+  const { year: ny, month: nm, day: nd } = nextCalendarYMD(year, month, day);
+  const nextDeadlineMs = wallTimeToUTC(ny, nm, nd, dh, dm, tz);
+  const windowMs = Math.max(1, deadlineMs - startMs);
 
   const totalPosts = postHistory.length;
   if (postsCountEl) postsCountEl.textContent = totalPosts + ' post' + (totalPosts !== 1 ? 's' : '') + ' total';
@@ -619,46 +669,50 @@ function updateTimer() {
   if (flowLastEl && last) flowLastEl.textContent = last.date || '—';
   if (lastPostedEl) lastPostedEl.textContent = last ? 'Last post: ' + last.date : 'No posts yet';
 
+  const fmtHM = (ms) => {
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    return `${h}h ${m}m`;
+  };
+
   if (postedToday) {
-    const msUntil = endOfDay - now;
-    const h = Math.floor(msUntil / 3600000);
-    const m = Math.floor((msUntil % 3600000) / 60000);
-    const display = `${h}h ${m}m`;
+    const msUntil = Math.max(0, nextDeadlineMs - now);
+    const display = fmtHM(msUntil);
     if (countdown) { countdown.textContent = display; countdown.className = 'timer-countdown'; }
     if (fill) { fill.style.width = '100%'; fill.className = 'timer-fill'; }
     if (right) right.textContent = '✓ Posted today';
     if (bigTimer) { bigTimer.textContent = display; bigTimer.style.color = 'var(--green)'; }
-    if (bigLabel) bigLabel.textContent = 'Until next post window — you\'re done for today ✓';
+    if (bigLabel) bigLabel.textContent = `Until ${dl} tomorrow — done for today ✓`;
     if (bigBar) { bigBar.style.width = '100%'; bigBar.style.background = 'var(--green)'; }
   } else {
-    const msLeft = endOfDay - now;
-    const totalDay = 86400000;
-    const pct = Math.min(100, Math.round(((totalDay - msLeft) / totalDay) * 100));
-    const h = Math.floor(msLeft / 3600000);
-    const m = Math.floor((msLeft % 3600000) / 60000);
+    const msLeft = deadlineMs - now;
+    const msPos = Math.max(0, msLeft);
+    const display = fmtHM(msPos);
 
     if (msLeft <= 0) {
       if (countdown) { countdown.textContent = 'Overdue'; countdown.className = 'timer-countdown overdue'; }
       if (fill) { fill.style.width = '100%'; fill.className = 'timer-fill overdue'; }
       if (right) right.textContent = '✕ No post today';
       if (bigTimer) { bigTimer.textContent = 'Overdue'; bigTimer.style.color = 'var(--red)'; }
-      if (bigLabel) bigLabel.textContent = 'You missed today — post now to keep the streak';
+      if (bigLabel) bigLabel.textContent = `Missed ${dl} — post now`;
       if (bigBar) { bigBar.style.width = '100%'; bigBar.style.background = 'var(--red)'; }
-    } else if (h < 3) {
-      const display = `${h}h ${m}m`;
+    } else if (msLeft < 3 * 3600000) {
+      const elapsed = now - startMs;
+      const pct = Math.min(100, Math.round((elapsed / windowMs) * 100));
       if (countdown) { countdown.textContent = display; countdown.className = 'timer-countdown urgent'; }
       if (fill) { fill.style.width = pct + '%'; fill.className = 'timer-fill urgent'; }
       if (right) right.textContent = '⚠ Post soon';
       if (bigTimer) { bigTimer.textContent = display; bigTimer.style.color = '#F97316'; }
-      if (bigLabel) bigLabel.textContent = 'Remaining today — post soon to keep the streak';
+      if (bigLabel) bigLabel.textContent = `Until ${dl} today`;
       if (bigBar) { bigBar.style.width = pct + '%'; bigBar.style.background = '#F97316'; }
     } else {
-      const display = `${h}h ${m}m`;
+      const elapsed = now - startMs;
+      const pct = Math.min(100, Math.round((elapsed / windowMs) * 100));
       if (countdown) { countdown.textContent = display; countdown.className = 'timer-countdown'; }
       if (fill) { fill.style.width = pct + '%'; fill.className = 'timer-fill'; }
       if (right) right.textContent = last ? `Last: ${last.date}` : 'No posts yet';
       if (bigTimer) { bigTimer.textContent = display; bigTimer.style.color = 'var(--ink)'; }
-      if (bigLabel) bigLabel.textContent = 'Remaining today to post';
+      if (bigLabel) bigLabel.textContent = `Until ${dl} today`;
       if (bigBar) { bigBar.style.width = pct + '%'; bigBar.style.background = 'var(--ink)'; }
     }
   }
