@@ -38,7 +38,7 @@ button { font-family: var(--body); cursor: pointer; }
 .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); }
 .nav-btn.dim { opacity: 0.3; cursor: not-allowed; }
 .nav-count { font-family: var(--mono); font-size: 9px; background: var(--red); color: #fff; padding: 1px 5px; border-radius: 2px; }
-.sidebar-foot { border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0; }
+.sidebar-foot { border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0; display: flex; flex-direction: column; gap: 2px; }
 .foot-link { display: flex; align-items: center; gap: 8px; padding: 6px 20px; font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.15s; }
 .foot-link:hover { color: rgba(255,255,255,0.6); }
 .foot-link svg { width: 11px; height: 11px; flex-shrink: 0; }
