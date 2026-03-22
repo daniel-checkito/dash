@@ -1,0 +1,50 @@
+import { nav } from './router.js';
+import {
+  init,
+  checkAuth,
+  doLogin,
+  saveStreakDate,
+  resetWorkflow,
+  startManual,
+  copyCurl,
+  startAuto,
+  rejectIdea,
+  approveIdea,
+  openDraft,
+  closeDraft,
+  closeDraftOutside,
+  requestRewrite,
+  copyPost,
+  markPublished,
+  filterH,
+  openHistPost,
+  submitIdea,
+  focusPlayPause,
+  focusReset,
+} from './app.js';
+
+Object.assign(window, {
+  nav,
+  doLogin,
+  saveStreakDate,
+  resetWorkflow,
+  startManual,
+  copyCurl,
+  startAuto,
+  rejectIdea,
+  approveIdea,
+  openDraft,
+  closeDraft,
+  closeDraftOutside,
+  requestRewrite,
+  copyPost,
+  markPublished,
+  filterH,
+  openHistPost,
+  submitIdea,
+  focusPlayPause,
+  focusReset,
+});
+
+checkAuth();
+if (sessionStorage.getItem('daemien_auth') === 'ok') init();

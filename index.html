@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daemien — Automation OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/app.css">
+
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-brand">Daemien</div>
+    <div class="login-tag">Automation OS</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="admin" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name">Daemien</div>
+      <div class="brand-tag">Automation OS</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-group-label">Workspace</div>
+        <button type="button" class="nav-btn active" data-nav="overview" onclick="nav('overview',this)">Overview</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">LinkedIn</div>
+        <button type="button" class="nav-btn" data-nav="li-run" onclick="nav('li-run',this)">Run Workflow <span class="nav-count" id="pending-badge" style="display:none">1</span></button>
+        <button type="button" class="nav-btn" data-nav="li-ideas-bank" onclick="nav('li-ideas-bank',this)">My Ideas</button>
+        <button type="button" class="nav-btn" data-nav="li-analytics" onclick="nav('li-analytics',this)">Analytics</button>
+        <button type="button" class="nav-btn" data-nav="li-history" onclick="nav('li-history',this)">History</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Platforms</div>
+        <button class="nav-btn dim">Email</button>
+        <button class="nav-btn dim">X / Twitter</button>
+      </div>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="https://app.n8n.cloud" target="_blank" class="foot-link">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="8" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><path d="M6 7l4-2M6 9l4 2"/></svg>
+        N8N Console
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-path">
+        <span id="crumb-root">Workspace</span>
+        <span>·</span>
+        <span class="cur" id="crumb-page">Overview</span>
+      </div>
+      <div class="topbar-right">
+        <div class="live-dot"><div class="dot"></div>Live</div>
+      </div>
+    </div>
+
+    <!-- TOP BAR: POSTING TIMER + FOCUS TIMER -->
+    <div class="timer-bar" style="display:flex;align-items:center;justify-content:space-between;gap:24px;">
+
+      <!-- LEFT: posting timer (existing) -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="timer-label">Next post</span>
+        <span class="timer-countdown" id="timer-countdown">—</span>
+        <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:0%"></div></div>
+        <span class="timer-right" id="timer-right" style="margin:0;"></span>
+      </div>
+
+      <!-- DIVIDER -->
+      <div style="width:1px;height:20px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+
+      <!-- RIGHT: 1hr focus timer -->
+      <div style="display:flex;align-items:center;gap:12px;flex:1;justify-content:flex-end;">
+        <span class="timer-label">Focus</span>
+        <span style="font-family:var(--mono);font-size:13px;color:#fff;letter-spacing:.08em;" id="focus-display">60:00</span>
+        <div class="timer-track" style="width:160px;"><div id="focus-fill" style="height:100%;background:rgba(255,255,255,0.5);border-radius:2px;width:100%;transition:width 1s linear;"></div></div>
+        <div style="display:flex;gap:6px;">
+          <button id="focus-play-btn" onclick="focusPlayPause()" style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border:1px solid rgba(255,255,255,0.2);background:none;color:rgba(255,255,255,0.7);cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">▶ Start</button>
+          <button onclick="focusReset()" style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border:1px solid rgba(255,255,255,0.2);background:none;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.4)';this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.5)'">↺ Reset</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="screen active" id="screen-overview">
+        <div class="ov-hero">
+          <div class="ov-hero-top">
+            <div>
+              <div class="ov-title">Overview</div>
+              <div class="ov-subtitle">Daemien · LinkedIn Automation Stack</div>
+            </div>
+            <div class="ov-date"><span>Today</span><strong id="today-date"></strong></div>
+          </div>
+        </div>
+
+        <!-- NEXT POST TIMER — big and central -->
+        <div style="margin:24px 28px 0;border:1px solid var(--line2);background:var(--surf);">
+          <div style="padding:10px 16px;background:var(--ink);display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.12em;">Next post due</span>
+            <span style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.08em;" id="ov-last-posted">—</span>
+          </div>
+          <div style="padding:24px 24px 20px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
+            <div>
+              <div style="font-family:var(--disp);font-size:56px;letter-spacing:.02em;line-height:1;color:var(--ink);" id="ov-timer-big">—:——</div>
+              <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.12em;margin-top:6px;" id="ov-timer-label">Calculating...</div>
+              <div style="margin-top:14px;height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;max-width:400px;">
+                <div id="ov-timer-bar" style="height:100%;background:var(--ink);border-radius:2px;width:0%;transition:width 60s linear;"></div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <button onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])" class="btn btn-primary" style="white-space:nowrap;">▶ Write post now</button>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:8px;text-transform:uppercase;letter-spacing:.1em;" id="ov-posts-count">0 posts total</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVE WORKFLOWS -->
+        <div class="section-head" style="margin-top:20px;"><h3>Active workflows</h3></div>
+        <div class="flows" style="margin-top:0;margin-bottom:0;">
+          <div class="flows-head"><div>Workflow</div><div>Status</div><div>Runs</div><div>Last run</div><div></div></div>
+
+          <div class="flow-row" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])">
+            <div>
+              <div class="flow-name">LinkedIn Autoposter</div>
+              <div class="flow-desc">Random idea · human approval · post</div>
+            </div>
+            <div><span class="badge badge-live">Live</span></div>
+            <div class="cell" id="flow-posts">—</div>
+            <div class="cell muted" id="flow-last-run">—</div>
+            <div class="arrow">→</div>
+          </div>
+
+          <div class="flow-row" onclick="nav('li-run',document.querySelectorAll('.nav-btn')[1])">
+            <div>
+              <div class="flow-name">LinkedIn Manual Post</div>
+              <div class="flow-desc">Your thought → post in your voice</div>
+            </div>
+            <div><span class="badge badge-live">Live</span></div>
+            <div class="cell" id="flow-manual-posts">—</div>
+            <div class="cell muted">—</div>
+            <div class="arrow">→</div>
+          </div>
+
+          <div class="flow-row">
+            <div>
+              <div class="flow-name">Email Newsletter</div>
+              <div class="flow-desc">Weekly digest from RSS + curated sources</div>
+            </div>
+            <div><span class="badge badge-build">Building</span></div>
+            <div class="cell muted">—</div>
+            <div class="cell muted">—</div>
+            <div class="arrow" style="opacity:.25">→</div>
+          </div>
+
+          <div class="flow-row">
+            <div>
+              <div class="flow-name">X / Twitter Threads</div>
+              <div class="flow-desc">Repurpose approved LinkedIn posts as threads</div>
+            </div>
+            <div><span class="badge badge-plan">Planned</span></div>
+            <div class="cell muted">—</div>
+            <div class="cell muted">—</div>
+            <div class="arrow" style="opacity:.25">→</div>
+          </div>
+        </div>
+
+        <!-- 30-DAY STREAK -->
+        <div class="section-head" style="margin-top:20px;">
+          <h3>30-day streak</h3>
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+            <span style="font-family:var(--mono);font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;">Start date</span>
+            <input type="date" id="s-streak-start" style="font-family:var(--mono);font-size:9px;border:1px solid var(--line);padding:3px 7px;background:var(--bg);color:var(--ink);outline:none;" onchange="saveStreakDate(this.value)">
+          </div>
+        </div>
+        <div class="streak-section" style="margin-bottom:28px;">
+          <div class="streak-head">
+            <span>Click a day to mark it done</span>
+            <strong id="streak-label">Day 0 / 30</strong>
+          </div>
+          <div class="streak-grid" id="streak-grid"></div>
+        </div>
+
+      </div>
+
+      <!-- RUN WORKFLOW -->
+      <div class="screen" id="screen-li-run">
+        <div class="run-hero">
+          <div class="run-hero-left">
+            <h2>Write Post</h2>
+            <p>LinkedIn Autoposter · Choose your mode</p>
+          </div>
+          <div class="run-btns">
+            <button class="btn" onclick="resetWorkflow()">Reset</button>
+          </div>
+        </div>
+
+        <div class="workflow-states" id="wf-states">
+
+          <!-- MODE SELECT -->
+          <div class="state-idle vis" id="state-idle">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line2);margin-bottom:24px;background:var(--surf);">
+
+              <!-- OPTION A: Manual -->
+              <div style="padding:28px 24px;border-right:1px solid var(--line2);">
+                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink3);margin-bottom:10px;">Option A</div>
+                <div style="font-family:var(--disp);font-size:28px;letter-spacing:.04em;margin-bottom:6px;">Your thought</div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.6;margin-bottom:20px;">You write the raw idea — Claude turns it into a post in your voice. Best when something actually happened today.</div>
+                <textarea id="manual-idea" style="width:100%;font-family:var(--body);font-size:13px;line-height:1.6;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:12px 14px;outline:none;resize:none;height:120px;transition:border-color .15s;margin-bottom:10px;" placeholder="Write your raw thought here — what happened, what you tried, what surprised you. Don't polish it." onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--line)'"></textarea>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-family:var(--mono);font-size:8px;color:var(--ink3);" id="thought-chars">0 chars</span>
+                  <button class="btn btn-primary" onclick="startManual()">▶ Write from thought</button>
+                </div>
+                <div id="manual-curl-box" style="display:none;margin-top:12px;border:1px solid var(--line2);background:var(--ink);">
+                  <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <span style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.12em;">Run this in Terminal</span>
+                    <button onclick="copyCurl()" style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border:1px solid rgba(255,255,255,0.2);background:none;color:rgba(255,255,255,0.6);cursor:pointer;">Copy</button>
+                  </div>
+                  <div style="padding:12px 14px;font-family:var(--mono);font-size:11px;color:#7dd3a8;line-height:1.6;word-break:break-all;white-space:pre-wrap;" id="manual-curl-cmd"></div>
+                </div>
+              </div>
+
+              <!-- OPTION B: Auto -->
+              <div style="padding:28px 24px;display:flex;flex-direction:column;">
+                <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink3);margin-bottom:10px;">Option B</div>
+                <div style="font-family:var(--disp);font-size:28px;letter-spacing:.04em;margin-bottom:6px;">Random idea</div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.6;margin-bottom:20px;">The workflow picks the best idea from your idea bank, Luma Berlin, and Indie Hackers — then writes the post. Best when you have nothing specific in mind.</div>
+                <div style="flex:1;padding:12px 14px;background:var(--bg);border:1px solid var(--line);font-family:var(--mono);font-size:9px;color:var(--ink3);line-height:1.8;margin-bottom:10px;">
+                  Checks your idea bank first<br>
+                  → Pulls Berlin events from Luma<br>
+                  → Scans Indie Hackers for stories<br>
+                  → Picks the best angle for today
+                </div>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button class="btn" onclick="startAuto()">▶ Generate random idea</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- EXAMPLES -->
+            <div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--ink3);">
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:8px;">Examples of good raw thoughts for Option A</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink2);line-height:1.9;">
+                "Heute Cursor zum ersten Mal bei der Arbeit benutzt. Hat mir 1 Stunde gespart aber ich musste den Code 3x erklären lassen."<br>
+                "War beim Berlin AI Meetup. 200 Leute. Alle reden über Agents aber niemand hat was live."<br>
+                "Etsy hat mir heute eine Email geschickt — Top 1% global. Ich dachte das sei normal bis mein Kollege meinte es sei nicht normal."
+              </div>
+            </div>
+          </div>
+
+          <!-- RUNNING STATE -->
+          <div class="state-running" id="state-running">
+            <div class="running-card">
+              <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);" id="running-mode-label">Generating your post</div>
+              <div style="font-family:var(--disp);font-size:26px;margin-top:4px;" id="running-title">Writing…</div>
+              <div class="progress-steps" id="progress-steps-manual">
+                <div class="pstep active" id="pstep-0"><div class="pstep-dot"></div>Saving idea to sheet</div>
+                <div class="pstep" id="pstep-1"><div class="pstep-dot"></div>Research agent picks it up</div>
+                <div class="pstep" id="pstep-2"><div class="pstep-dot"></div>Writing the post</div>
+                <div class="pstep" id="pstep-3"><div class="pstep-dot"></div>Draft ready</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- IDEA REVIEW (auto mode only) -->
+          <div class="state-idea" id="state-idea">
+            <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink3);margin-bottom:12px;">Idea ready · approve or reject</div>
+            <div class="idea-card">
+              <div class="idea-card-head">
+                <span>Post idea</span>
+                <span id="idea-date-lbl"></span>
+              </div>
+              <div class="idea-card-body">
+                <div class="idea-title-big" id="idea-title">—</div>
+                <div class="idea-tags" id="idea-tags"></div>
+                <div class="idea-hook" id="idea-hook">—</div>
+                <div class="idea-why" id="idea-why"></div>
+                <div class="idea-source" id="idea-source"></div>
+              </div>
+              <div class="idea-card-foot">
+                <div class="idea-actions">
+                  <button class="btn-sm danger" onclick="rejectIdea()">✕ Reject</button>
+                  <button class="btn-sm" id="approve-btn" onclick="approveIdea()">Generate post →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DRAFT READY -->
+          <div class="state-draft" id="state-draft">
+            <div class="idle-card">
+              <div class="idle-icon" style="color:var(--green);opacity:1;">✓</div>
+              <h3>Post generated</h3>
+              <p>Your draft is ready to review and publish</p>
+              <button class="btn btn-green" onclick="openDraft()">View draft →</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+            <!-- ANALYTICS -->
+      <div class="screen" id="screen-li-analytics">
+        <div class="page-hero">
+          <div><div class="page-hero-title">LinkedIn Analytics</div><div class="page-hero-sub">Performance report · from post history</div></div>
+          <div class="page-hero-right">Updated from your history</div>
+        </div>
+        <div class="metrics-strip" id="analytics-strip">
+          <div class="metric"><div class="metric-v" id="an-posts">—</div><div class="metric-l">Posts published</div><div class="metric-d" id="an-posts-d">—</div></div>
+          <div class="metric"><div class="metric-v" id="an-impr">—</div><div class="metric-l">Total impressions</div><div class="metric-d">From post history</div></div>
+          <div class="metric"><div class="metric-v" id="an-streak">0</div><div class="metric-l">Current streak</div><div class="metric-d">30-day challenge</div></div>
+        </div>
+        <div class="chart-area">
+          <div class="chart-area-head"><span class="ca-title">Impressions per post</span><span class="ca-note" id="an-peak">—</span></div>
+          <div class="big-bars" id="imp-chart"></div>
+        </div>
+        <div class="two-col">
+
+          <div class="chart-area" style="border-bottom:1px solid var(--line);">
+            <div class="chart-area-head"><span class="ca-title">Posts by category</span></div>
+            <div style="margin-top:8px;" id="cat-section"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="screen" id="screen-li-history">
+        <div class="hist-head">
+          <div><h2>Post History</h2><p id="hist-summary">0 posts published</p></div>
+        </div>
+        <div class="filter-row">
+          <button class="filter-pill active" onclick="filterH('all',this)">All</button>
+          <button class="filter-pill" onclick="filterH('high',this)">Score 8+</button>
+          <button class="filter-pill" onclick="filterH('mid',this)">Score 5–7</button>
+          <button class="filter-pill" onclick="filterH('low',this)">Below 5</button>
+        </div>
+        <div class="hist-table">
+          <div class="hist-thead"><div>Post</div><div>Date</div><div>Impressions</div><div>Likes</div><div>Day</div></div>
+          <div id="hist-body"></div>
+        </div>
+      </div>
+
+      <!-- MY IDEAS BANK -->
+      <div class="screen" id="screen-li-ideas-bank">
+        <div class="ideas-bank-layout">
+          <div class="ideas-form-col">
+            <h2>My Ideas</h2>
+            <p class="sub">Dump a thought → saved to Google Sheets</p>
+            <div class="field"><label>Idea *</label><textarea id="f-idea" placeholder="Write your raw idea here — no need to polish it…"></textarea></div>
+            <div class="field">
+              <label>Category</label>
+              <select id="f-category">
+                <option value="">— pick one —</option>
+                <option value="apprenticeship">Apprenticeship</option>
+                <option value="ai_tools">AI Tools / Cursor</option>
+                <option value="berlin">Berlin Scene</option>
+                <option value="win">Win / Success</option>
+                <option value="fail">Fail / Lesson</option>
+                <option value="founder">Founder Story</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button class="submit-btn" id="submit-idea-btn" onclick="submitIdea()">+ Save idea to sheet</button>
+            <div class="form-status" id="form-status"></div>
+            <div style="margin-top:auto;padding-top:20px;font-family:var(--mono);font-size:8px;color:var(--ink3);line-height:1.8;border-top:1px solid var(--line);">
+              <strong style="color:var(--ink2);display:block;margin-bottom:4px;">SHEET COLUMNS</strong>
+              id · idea · category · status · added_on<br>
+              <span style="opacity:.6">Status defaults to <em>unused</em></span>
+            </div>
+          </div>
+          <div class="ideas-list-col">
+            <div class="ideas-list-head">
+              <h3>Added this session</h3>
+              <span id="ideas-count">0 ideas</span>
+            </div>
+            <div id="ideas-local-list"><div class="ideas-empty">No ideas yet<br><span style="font-size:8px;opacity:.5">Submit your first idea on the left</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- DRAFT OVERLAY -->
+<div class="overlay hidden" id="draft-overlay" onclick="closeDraftOutside(event)">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <h3>Generated Post</h3>
+      <div class="overlay-head-right">
+        <span style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;">Click text to edit</span>
+        <button class="overlay-close" onclick="closeDraft()">✕ Close</button>
+      </div>
+    </div>
+    <div class="overlay-body">
+      <div class="post-text" id="draft-text" contenteditable="true">Loading draft...</div>
+      <div class="post-meta">
+        <div class="pm"><strong id="draft-chars">0</strong> chars</div>
+        <div class="pm"><strong id="draft-words">0</strong> words</div>
+        <div class="pm">Generated <strong id="draft-time"></strong></div>
+      </div>
+    </div>
+    <div class="overlay-foot">
+      <div class="overlay-foot-left">
+        <button class="btn" onclick="closeDraft()">Close</button>
+        <button class="btn" onclick="requestRewrite()">↺ Rewrite</button>
+      </div>
+      <div class="overlay-foot-right">
+        <button class="btn btn-primary" onclick="copyPost()">Copy to clipboard</button>
+        <button class="btn btn-green" onclick="markPublished()">Mark as published ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- GENERATING OVERLAY -->
+<div class="gen-overlay hidden" id="gen-overlay">
+  <div class="gen-box">
+    <h3>Generating</h3>
+    <p>Writing your LinkedIn post…</p>
+    <div class="loader"><div class="l-dot"></div><div class="l-dot"></div><div class="l-dot"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>
