@@ -21,6 +21,7 @@ import {
   submitIdea,
   focusPlayPause,
   focusReset,
+  toggleDailyTask,
 } from './app.js';
 
 Object.assign(window, {
@@ -44,6 +45,7 @@ Object.assign(window, {
   submitIdea,
   focusPlayPause,
   focusReset,
+  toggleDailyTask,
 });
 
 checkAuth();

@@ -47,6 +47,13 @@ let currentIdea = null;
 let currentDraft = null;
 let postHistory = [];
 let localIdeas = [];
+let dailyTaskLog = {};
+
+const DAILY_TASKS = [
+  { id: 'linkedin_danielhaag_en', label: 'Post on LinkedIn account "danielhaag-en"' },
+  { id: 'emails_10', label: 'Send 10 emails' },
+  { id: 'instagram_meshminds', label: 'Post on Instagram account "meshminds"' },
+];
 
 // ── INIT ──
 function init() {
@@ -55,6 +62,8 @@ function init() {
   document.getElementById('today-date').textContent =
     new Date().toLocaleDateString('en-GB', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   loadHistory();
+  loadDailyTasks();
+  renderDailyTasks();
   startPostingTimer();
   buildStreakGrid();
   initFocusTimer();
@@ -67,6 +76,58 @@ function loadHistory() {
   try { postHistory = JSON.parse(localStorage.getItem('daemien_history') || '[]'); } catch(e) { postHistory = []; }
   refreshAnalytics();
   refreshHistory();
+}
+
+function loadDailyTasks() {
+  try {
+    dailyTaskLog = JSON.parse(localStorage.getItem('daemien_daily_tasks') || '{}');
+  } catch (e) {
+    dailyTaskLog = {};
+  }
+}
+
+function saveDailyTasks() {
+  localStorage.setItem('daemien_daily_tasks', JSON.stringify(dailyTaskLog));
+}
+
+function todayKeyInTZ() {
+  const tz = CFG.postDeadlineTimezone || 'Europe/Berlin';
+  const { year, month, day } = ymdInTZ(new Date(), tz);
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function renderDailyTasks() {
+  const list = document.getElementById('daily-task-list');
+  const progress = document.getElementById('daily-tasks-progress');
+  if (!list || !progress) return;
+
+  const todayKey = todayKeyInTZ();
+  const todayTasks = dailyTaskLog[todayKey] || {};
+  const doneCount = DAILY_TASKS.filter(task => !!todayTasks[task.id]).length;
+  progress.textContent = `${doneCount} / ${DAILY_TASKS.length} done`;
+
+  list.innerHTML = DAILY_TASKS.map((task) => {
+    const isDone = !!todayTasks[task.id];
+    return `<div class="daily-task-row ${isDone ? 'done' : ''}" onclick="toggleDailyTask('${task.id}')">
+      <span class="daily-task-check">${isDone ? '✓' : ''}</span>
+      <span class="daily-task-text">${esc(task.label)}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleDailyTask(taskId) {
+  const todayKey = todayKeyInTZ();
+  const todayTasks = { ...(dailyTaskLog[todayKey] || {}) };
+  if (todayTasks[taskId]) {
+    delete todayTasks[taskId];
+    toast('Task unmarked');
+  } else {
+    todayTasks[taskId] = true;
+    toast('Task completed ✓');
+  }
+  dailyTaskLog[todayKey] = todayTasks;
+  saveDailyTasks();
+  renderDailyTasks();
 }
 
 // ── SETTINGS (minimal — just streak date and webhook URL) ──
@@ -788,4 +849,5 @@ export {
   submitIdea,
   focusPlayPause,
   focusReset,
+  toggleDailyTask,
 };
